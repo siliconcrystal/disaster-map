@@ -33,8 +33,8 @@ export function PolygonLayer() {
             }
           }}
           pathOptions={{
-            color: zone.color || (zone.type === 'evacuation' ? '#22c55e' : zone.type === 'ngo' ? '#3b82f6' : '#ef4444'),
-            fillColor: zone.color || (zone.type === 'evacuation' ? '#22c55e' : zone.type === 'ngo' ? '#3b82f6' : '#ef4444'),
+            color: zone.color || (zone.type === 'evacuation' ? '#37a4b5' : zone.type === 'ngo' ? '#3b82f6' : '#ff3333'),
+            fillColor: zone.color || (zone.type === 'evacuation' ? '#37a4b5' : zone.type === 'ngo' ? '#3b82f6' : '#ff3333'),
             fillOpacity: 0.15,
             weight: 2,
             dashArray: '8, 12',

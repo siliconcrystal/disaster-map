@@ -100,7 +100,7 @@ const generateMockZones = (): MapZone[] => {
         [22.997, 120.215],
       ], // Pentagon-ish
       description: '台南公園現已開放為緊急避難場所。區內設有醫療站、臨時供水點及行動通訊強化設備。建議避難民眾由勝利路入口進入。',
-      color: '#22c55e'
+      color: '#37a4b5'
     },
     {
       id: 'zone-2',
@@ -127,7 +127,7 @@ const generateMockZones = (): MapZone[] => {
         [23.016, 120.251],
       ], // Trapezoid-ish
       description: '該區域因建築物嚴重受損，仍有倒塌風險。根據災害防救法，目前實施封鎖管制。嚴禁非特種搜救隊及結構工程技師以外人員進入，違者將依法重罰。',
-      color: '#ef4444'
+      color: '#ff3333'
     }
   ];
 };
