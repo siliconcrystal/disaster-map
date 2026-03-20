@@ -23,7 +23,7 @@ export function TaskListPanel() {
 
   return (
     <div className="absolute top-[280px] md:top-[280px] left-4 right-4 md:right-auto md:w-80 bottom-4 z-[1000] pointer-events-none flex flex-col gap-2 animate-in slide-in-from-left-8 duration-300">
-      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl flex-1 overflow-hidden flex flex-col pointer-events-auto">
+      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl dark:border-slate-800 rounded-2xl shadow-xl flex-1 overflow-hidden flex flex-col pointer-events-auto">
         <div className="p-3.5 px-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
           <h2 className="font-semibold text-slate-800 dark:text-slate-200 tracking-wide">搜尋與篩選結果 ({filteredTasks.length})</h2>
           <button

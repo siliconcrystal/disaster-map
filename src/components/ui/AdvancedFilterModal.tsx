@@ -9,18 +9,18 @@ import { CalendarRangePicker } from "./CalendarRangePicker";
 
 const TYPE_OPTIONS: { label: string, value: TaskType | 'all' }[] = [
   { label: '全部', value: 'all' },
-  { label: '🔥火災', value: 'fire' },
-  { label: '🚨搜救', value: 'rescue' },
-  { label: '🚧危險區域', value: 'danger' },
-  { label: '👥人員統計', value: 'people' },
-  { label: '⛑️建築檢查', value: 'inspection' },
-  { label: '🚑醫療', value: 'medical' },
-  { label: '📦物資', value: 'supply' },
-  { label: '🪏清理淤泥', value: 'cleanup' },
-  { label: '🚜重型機具', value: 'heavy' },
-  { label: '🔧水電', value: 'utility' },
-  { label: '💪人力支援', value: 'support' },
-  { label: '🛵協助運送', value: 'transport' },
+  { label: '🔥 火災', value: 'fire' },
+  { label: '🚨 搜救', value: 'rescue' },
+  { label: '🚧 危險區域', value: 'danger' },
+  { label: '👥 人員統計', value: 'people' },
+  { label: '⛑️ 建築檢查', value: 'inspection' },
+  { label: '🚑 醫療', value: 'medical' },
+  { label: '📦 物資', value: 'supply' },
+  { label: '🪏 清理淤泥', value: 'cleanup' },
+  { label: '🚜 重型機具', value: 'heavy' },
+  { label: '🔧 水電', value: 'utility' },
+  { label: '💪 人力支援', value: 'support' },
+  { label: '🛵 協助運送', value: 'transport' },
 ];
 
 const URGENCY_OPTIONS: { label: string, value: Urgency | 'all' }[] = [

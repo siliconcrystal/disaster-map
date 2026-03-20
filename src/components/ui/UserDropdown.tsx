@@ -93,7 +93,7 @@ export function UserDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-3 w-[240px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden z-[9999] pointer-events-auto flex flex-col"
+            className="absolute right-0 mt-3 w-[240px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden z-[9999] pointer-events-auto flex flex-col"
           >
             {view === 'main' ? (
               <motion.div

@@ -14,7 +14,7 @@ export function ZoneDetailCard() {
     return (
         <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center sm:justify-end sm:pr-4 pointer-events-none bg-black/20 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none transition-all">
             <div
-                className="relative w-full h-[60vh] sm:h-auto sm:max-h-[85vh] sm:w-[380px] bg-white dark:bg-slate-900 sm:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-full sm:slide-in-from-right-8 duration-300 border border-slate-200 dark:border-slate-800 flex flex-col pointer-events-auto"
+                className="relative w-full h-[60vh] sm:h-auto sm:max-h-[85vh] sm:w-[380px] bg-white dark:bg-slate-900 sm:rounded-3xl rounded-t-3xl shadow-xl overflow-hidden animate-in slide-in-from-bottom-full sm:slide-in-from-right-8 duration-300 dark:border-slate-800 flex flex-col pointer-events-auto"
             >
 
                 <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">

@@ -20,7 +20,7 @@ export function AreaSummaryCard() {
   };
 
   return (
-    <div className={`absolute top-[136px] left-4 right-24 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] bg-white/95 backdrop-blur dark:bg-slate-900/95 rounded-2xl shadow-[0_2px_15px_rgba(0,0,0,0.06)] border border-slate-100/50 dark:border-slate-800 transition-all duration-300 overflow-hidden p-2`}>
+    <div className={`absolute top-[136px] left-4 right-20 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] bg-white/20 backdrop-blur dark:bg-slate-900/20 backdrop-blur rounded-2xl shadow-l transition-all duration-300 overflow-hidden p-2`}>
       <div
         className="flex items-center justify-between cursor-pointer px-1"
         onClick={() => setIsCollapsed(!isCollapsed)}
