@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
@@ -23,4 +24,83 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ── Selected Pin Animated Noise Ring ─────────────────────────────── */
+@keyframes spin-gradient {
+  0% {
+    transform: rotate(0deg) scale(1.05);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1.05);
+  }
+}
+
+@keyframes pulse-ring {
+
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.selected-pin-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  isolation: isolate;
+}
+
+.selected-pin-ring::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  background: conic-gradient(from 0deg,
+      #c7d2fe,
+      #fbcfe8,
+      #ddd6fe,
+      #bfdbfe,
+      #c7d2fe);
+  animation: spin-gradient 3s linear infinite, pulse-ring 2s ease-in-out infinite;
+  filter: blur(1.5px);
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.selected-pin-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: white;
+  z-index: -1;
+}
+
+.dark .selected-pin-ring::after {
+  background: #1e293b;
 }

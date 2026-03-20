@@ -1,0 +1,34 @@
+"use client";
+
+import { Search } from "lucide-react";
+import { useTaskStore } from "@/store/useTaskStore";
+import { UserDropdown } from "./UserDropdown";
+
+export function TopBar() {
+  const { searchQuery, setSearchQuery } = useTaskStore();
+
+  return (
+    <>
+      <div className="absolute top-5 left-5 z-[1000] pointer-events-none flex items-start gap-2 w-[calc(100%-2.5rem)]">
+        {/* Search Input */}
+        <div className="relative min-w-0 flex-1 md:max-w-[460px] shrink shadow-[0_2px_15px_rgba(0,0,0,0.06)] rounded-full bg-white/95 backdrop-blur dark:bg-slate-900/95 border border-slate-100/50 dark:border-slate-800 group pointer-events-auto transition-all">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <Search className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-blue-500 transition-colors" strokeWidth={2.5} />
+          </div>
+          <input
+            type="text"
+            className="w-full pl-10 pr-4 py-3.5 rounded-full bg-transparent outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm md:text-base tracking-wide text-slate-900 dark:text-slate-100 placeholder:text-slate-400 font-medium"
+            placeholder="搜尋任務、地點..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* User Dropdown (Top Right) */}
+        <div className="pointer-events-auto shrink-0">
+          <UserDropdown />
+        </div>
+      </div>
+    </>
+  );
+}
