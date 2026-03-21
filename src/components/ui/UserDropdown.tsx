@@ -143,7 +143,7 @@ export function UserDropdown() {
                     {currentTheme === 'dark' ? <Moon className="w-5 h-5 opacity-60 text-slate-500" /> : <Sun className="w-5 h-5 opacity-80 text-slate-600" />}
                     <span className="text-[15px] font-medium tracking-wide">深色主題</span>
                   </div>
-                  <div className={`w-10 h-6 flex items-center bg-slate-200 dark:bg-indigo-500 rounded-full p-1 transition-colors duration-300`}>
+                  <div className={`w-10 h-6 flex items-center bg-slate-200 dark:bg-blue-500 rounded-full p-1 transition-colors duration-300`}>
                     <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${currentTheme === 'dark' ? 'translate-x-4' : 'translate-x-0'}`} />
                   </div>
                 </button>

@@ -27,7 +27,7 @@ const TaskCard = ({ task }: { task: Task }) => {
   return (
     <div
       onClick={() => setSelectedTaskId(task.id)}
-      className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all group"
+      className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-l dark:shadow-none border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all group"
     >
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xl"> {TYPE_EMOJI[task.type] || '📍'}</span>
