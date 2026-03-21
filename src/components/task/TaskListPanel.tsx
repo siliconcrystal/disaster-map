@@ -129,7 +129,7 @@ export function TaskListPanel() {
                 <div className="flex items-center gap-1 text-[10px] text-slate-400">
                   <MapPin className="w-3 h-3" />
                   <span>
-                    {task.lat.toFixed(4)}, {task.lng.toFixed(4)}
+                    {task.address}
                   </span>
                 </div>
               </button>

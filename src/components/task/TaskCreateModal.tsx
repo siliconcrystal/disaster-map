@@ -72,46 +72,6 @@ export function TaskCreateModal() {
             />
           </div>
 
-          {/* 位置 */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              位置
-            </label>
-            <input
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
-              placeholder="輸入地址"
-            />
-
-            {/* 地圖示意區塊 */}
-            <div className="mt-2 h-52 w-full bg-slate-100 dark:bg-slate-800 rounded-xl relative">
-              {/* Pin 完全置中 */}
-              <div className="absolute inset-0 flex items-center justify-center text-white text-2xl">
-                📍
-              </div>
-            </div>
-
-            <p className="mt-1 text-xs text-slate-400">
-              目前座標：{newTaskCoords[0].toFixed(5)}, {newTaskCoords[1].toFixed(5)}
-            </p>
-          </div>
-
-          {/* 描述 */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              描述
-            </label>
-            <textarea
-              required
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white resize-none"
-              placeholder="詳細情況..."
-            />
-          </div>
-
           {/* 類型 / 緊急程度 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -152,6 +112,49 @@ export function TaskCreateModal() {
                 <option value="high">緊急</option>
               </select>
             </div>
+          </div>
+
+          {/* 位置 */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              位置
+            </label>
+            <p className="mt-1 text-xs text-slate-400 mb-1">
+              輸入任務地址或移動座標。
+            </p>
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
+              placeholder="任務地址..."
+            />
+
+            {/* 地圖示意區塊 */}
+            <div className="mt-2 h-52 w-full bg-[url('/miniMapMock.png')] bg-cover bg-center rounded-xl relative">
+              {/* Pin 完全置中 */}
+              <div className="absolute inset-0 flex items-center justify-center text-white text-2xl">
+                📍
+              </div>
+            </div>
+
+            <p className="mt-1 text-xs text-slate-400">
+              座標位置： 台北市信義區松高路 1 號 ({newTaskCoords[0].toFixed(5)}, {newTaskCoords[1].toFixed(5)})
+            </p>
+          </div>
+
+          {/* 描述 */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              描述
+            </label>
+            <textarea
+              required
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white resize-none"
+              placeholder="詳細情況..."
+            />
           </div>
 
           <div className="pt-4">

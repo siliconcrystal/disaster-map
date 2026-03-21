@@ -37,7 +37,7 @@ const TaskCard = ({ task }: { task: Task }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1 text-[11px] font-medium text-slate-400 dark:text-slate-500">
           <MapPin className="w-3.5 h-3.5" />
-          {task.lat.toFixed(4)}, {task.lng.toFixed(4)}
+          {task.address}
         </div>
         <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${task.urgency === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : task.urgency === 'medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
           {task.urgency === 'high' ? '緊急' : task.urgency === 'medium' ? '中等' : '一般'}
