@@ -81,9 +81,13 @@ export function UserDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-13 h-13 rounded-full bg-slate-200 dark:bg-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors pointer-events-auto  shadow-[0_2px_15px_rgba(0,0,0,0.06)]"
+        className="w-13 h-13 rounded-full 
+        bg-[url('/Avatar.png')] bg-cover bg-center dark:bg-slate-700 bg-cover bg-center 
+        border border-white border-1 dark:border-slate-700  
+        shadow-xl flex items-center justify-center text-slate-400 dark:text-slate-500 
+        hover:text-slate-500 dark:hover:text-slate-300 hover:bg-blue-100/70 dark:hover:bg-slate-700 transition-colors pointer-events-auto  shadow-xl"
       >
-        <User className="w-6 h-6 text-slate-400" />
+        
       </button>
 
       <AnimatePresence>

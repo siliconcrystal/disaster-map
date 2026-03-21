@@ -66,9 +66,9 @@ export function MapControls() {
                   <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-2">地圖種類</span>
                   <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
                     {[
-                      { id: 'adaptive', label: '預設' },
-                      { id: 'satellite', label: '衛星圖' },
-                      { id: 'streets', label: '街道' }
+                      { id: 'streets', label: '街道' },
+                      { id: 'adaptive', label: '簡約' },
+                      { id: 'satellite', label: '衛星圖' }
                     ].map((type) => (
                       <button
                         key={type.id}

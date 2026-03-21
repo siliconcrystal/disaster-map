@@ -64,7 +64,7 @@ export function TaskListPanel() {
       <div
         className="
           w-full md:w-auto
-          h-[50vh] md:h-[70vh]
+          h-[50vh] md:h-[55vh]
           bg-white dark:bg-slate-900
           rounded-t-3xl md:rounded-2xl
           shadow-xl

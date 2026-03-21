@@ -47,7 +47,7 @@ export const useUIStore = create<UIState>((set) => ({
     waterLevel: false,
     terrain: false,
   },
-  mapType: "adaptive",
+  mapType: "streets",
   layerMenuOpen: false,
   currentUserRole: null, // null means not logged in
   viewMode: 'map',
