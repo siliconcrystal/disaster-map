@@ -1,0 +1,3 @@
+:HL["/disaster-map/_next/static/chunks/0opyf.oq0jxa_.css","style"]
+:HL["/disaster-map/_next/static/chunks/0a-39gphm6_0t.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"UwfYwtSujYmDHwvu3XvHm"}
