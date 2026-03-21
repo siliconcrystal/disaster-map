@@ -18,7 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+    <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem>
       {children}
       <TaskFullDetailModal />
       <TaskCreateModal />
