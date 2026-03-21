@@ -33,12 +33,7 @@ export function TaskFeedback({ helpful, toConfirm }: TaskFeedbackProps) {
                 </button>
             </div>
 
-            <div className="pt-2">
-                <button className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors font-medium">
-                    <Share2 className="w-4 h-4" />
-                    分享此任務
-                </button>
-            </div>
+
         </div>
     );
 }
