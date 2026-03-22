@@ -20,7 +20,7 @@ export function AreaSummaryCard() {
   };
 
   return (
-    <div className={`absolute top-[136px] left-4 right-20 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] bg-white/20 border border-slate-100/40 backdrop-blur dark:bg-slate-900/20 dark:border-slate-800 backdrop-blur rounded-xl shadow-l transition-all duration-300 overflow-hidden p-2`}>
+    <div className={`absolute top-[136px] left-4 right-20 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] bg-white/20 border border-white backdrop-blur dark:bg-slate-900/50 dark:border-slate-800/80 backdrop-blur rounded-xl shadow-l transition-all duration-300 overflow-hidden p-2`}>
       <div
         className="flex items-center justify-between cursor-pointer px-1"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -45,28 +45,28 @@ export function AreaSummaryCard() {
         className={`transition-all duration-300 ease-in-out origin-top ${isCollapsed ? 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none' : 'grid-rows-[1fr] opacity-100 mt-2 pointer-events-auto'} grid`}
       >
         <div className="overflow-hidden px-1 pb-1">
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide mb-3">
+          <p className="text-[11px] text-slate-500 dark:text-slate-200 font-medium tracking-wide mb-3">
             任務總數：{tasks.length} | 以搜救、物資需求為主要任務
           </p>
 
           <div className="flex flex-wrap gap-1.5">
             <div
               onClick={() => handlePinClick('fire')}
-              className="flex items-center gap-1 px-2.5 py-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-full text-[11px] font-bold text-slate-800 dark:text-slate-100 transition-colors cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
+              className="flex items-center gap-1 px-2.5 py-1 bg-white/40 dark:bg-slate-800/40 rounded-full text-[11px] font-bold text-slate-800 dark:text-slate-100 transition-colors cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
             >
               <Pin className="w-3 h-3 text-red-600 fill-red-600 rotate-45 transform -scale-x-100" />
               <span>🔥 中西區民宅火災</span>
             </div>
             <div
               onClick={() => handlePinClick('rescue')}
-              className="flex items-center gap-1 px-2.5 py-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-full text-[11px] font-bold text-slate-800 dark:text-slate-100 transition-colors cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
+              className="flex items-center gap-1 px-2.5 py-1 bg-white/40 dark:bg-slate-800/40 rounded-full text-[11px] font-bold text-slate-800 dark:text-slate-100 transition-colors cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
             >
               <Pin className="w-3 h-3 text-red-600 fill-red-600 rotate-45 transform -scale-x-100" />
               <span>🚨 永康區搜救行動</span>
             </div>
             <div
               onClick={() => handlePinClick('supply')}
-              className="flex items-center gap-1 px-2.5 py-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-full text-[11px] font-bold text-slate-800 dark:text-slate-100 transition-colors cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
+              className="flex items-center gap-1 px-2.5 py-1 bg-white/40 dark:bg-slate-800/40 rounded-full text-[11px] font-bold text-slate-800 dark:text-slate-100 transition-colors cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
             >
               <Pin className="w-3 h-3 text-red-600 fill-red-600 rotate-45 transform -scale-x-100" />
               <span>📦 北區物資發放點</span>

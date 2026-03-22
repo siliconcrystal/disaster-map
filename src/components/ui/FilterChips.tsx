@@ -133,8 +133,8 @@ export function FilterDropdown({
 
   const isSelectedStyle = value !== 'all';
   const buttonClass = isSelectedStyle 
-      ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300'
-      : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-[#3c4043] dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800';
+      ? 'bg-blue-50/80 border-blue-200/80 text-blue-700/80 dark:bg-blue-900/80 dark:border-blue-800/80 dark:text-blue-300/80'
+      : 'bg-white/80 dark:bg-slate-900/80 border-slate-100/80 dark:border-slate-800/80 text-[#3c4043] dark:text-slate-300/80 hover:bg-slate-50/80 dark:hover:bg-slate-800/80';
 
   return (
     <>
@@ -263,7 +263,7 @@ export function FilterChips() {
 
         <button 
           onClick={() => setAdvancedFilterOpen(true)}
-          className="flex-shrink-0 flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800 text-[13px] font-medium text-[#3c4043] dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors pointer-events-auto"
+          className="flex-shrink-0 flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-white/80 dark:bg-slate-900/80 shadow-sm border border-slate-100/80 dark:border-slate-800/80 text-[13px] font-medium text-[#3c4043] dark:text-slate-300 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 transition-colors pointer-events-auto"
         >
           <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
           進階

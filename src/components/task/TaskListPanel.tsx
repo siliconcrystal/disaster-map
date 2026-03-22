@@ -66,7 +66,7 @@ export function TaskListPanel() {
           w-full md:w-auto
           h-[50vh] md:h-[55vh]
           bg-white dark:bg-slate-900
-          rounded-t-3xl md:rounded-2xl
+          rounded-t-2xl md:rounded-2xl
           shadow-xl
           flex flex-col
           pointer-events-auto
@@ -79,7 +79,7 @@ export function TaskListPanel() {
         </div>
 
         {/* Header */}
-        <div className="p-3.5 px-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
+        <div className="p-3.5 px-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl flex justify-between items-center">
           <h2 className="font-semibold text-slate-800 dark:text-slate-200 tracking-wide">
             搜尋與篩選結果 ({filteredTasks.length})
           </h2>
