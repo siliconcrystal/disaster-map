@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ROLES = [
-  
+
   { name: "指揮所", icon: "🎖️" },
   { name: "災民", icon: "🏡" },
   { name: "救難隊", icon: "🆘" },
@@ -121,10 +121,10 @@ export function UserDropdown() {
                   className="flex items-center justify-between w-full px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <div className="flex items-center gap-3">
-                    <User className="w-5 h-5 opacity-80 text-slate-600" />
-                    <span className="text-[15px] font-medium">切換角色</span>
+                    <User className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
+                    <span className="text-[15px] dark:text-slate-300 font-medium">切換角色</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 opacity-50" />
+                  <ChevronRight className="w-4 h-4 dark:text-slate-300 opacity-50" />
                 </button>
 
                 <div className="h-px bg-slate-100 dark:bg-slate-800 mx-3 my-1" />
@@ -133,16 +133,16 @@ export function UserDropdown() {
                   onClick={handleReportTask}
                   className="flex items-center gap-3 w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
-                  <AlertTriangle className="w-5 h-5 opacity-80 text-slate-600" />
-                  <span className="text-[15px] font-medium">回報任務</span>
+                  <AlertTriangle className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
+                  <span className="text-[15px] dark:text-slate-300 font-medium">回報任務</span>
                 </button>
 
                 <button
                   onClick={() => { setViewMode(viewMode === 'map' ? 'board' : 'map'); setIsOpen(false); }}
                   className="flex items-center gap-3 w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
-                  <Monitor className="w-5 h-5 opacity-80 text-slate-600" />
-                  <span className="text-[15px] font-medium">
+                  <Monitor className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
+                  <span className="text-[15px] font-medium dark:text-slate-300">
                     {viewMode === 'map' ? '切換看板模式' : '切換地圖模式'}
                   </span>
                 </button>
@@ -153,9 +153,9 @@ export function UserDropdown() {
                 >
                   <div className="flex items-center gap-3">
                     {currentTheme === 'dark'
-                      ? <Moon className="w-5 h-5 opacity-60 text-slate-500" />
-                      : <Sun className="w-5 h-5 opacity-80 text-slate-600" />}
-                    <span className="text-[15px] font-medium">深色主題</span>
+                      ? <Moon className="w-5 h-5 opacity-60 text-slate-500 dark:text-slate-300" />
+                      : <Sun className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />}
+                    <span className="text-[15px] font-medium dark:text-slate-300">深色主題</span>
                   </div>
                   <div className="w-10 h-6 flex items-center bg-slate-200 dark:bg-blue-500 rounded-full p-1">
                     <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${currentTheme === 'dark' ? 'translate-x-4' : ''}`} />
@@ -167,12 +167,12 @@ export function UserDropdown() {
                 <div className="px-5 py-2">
                   <button
                     onClick={handleLoginToggle}
-                    className="w-full py-2.5 rounded-xl hover:bg-slate-200 border border-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2 text-[14px] font-bold"
+                    className="w-full py-2.5 dark:text-slate-300 rounded-xl hover:bg-slate-200 border border-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2 text-[14px] font-bold"
                   >
                     {isLoggedIn ? (
-                      <><LogOut className="w-4 h-4" /> 登出</>
+                      <><LogOut className="w-4 h-4 dark:text-slate-300" /> 登出</>
                     ) : (
-                      <><LogIn className="w-4 h-4" /> 登入</>
+                      <><LogIn className="w-4 h-4 dark:text-slate-300" /> 登入</>
                     )}
                   </button>
 
