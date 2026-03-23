@@ -5,11 +5,16 @@ import { FilterChips } from "@/components/ui/FilterChips";
 import { AdvancedFilterModal } from "@/components/ui/AdvancedFilterModal";
 import { TaskListPanel } from "@/components/task/TaskListPanel";
 import { TaskDetailCard } from "@/components/task/TaskDetailCard";
-import { TaskCreateModal } from "@/components/task/TaskCreateModal";
 import { AreaSummaryCard } from "@/components/ui/AreaSummaryCard";
 import { BoardView } from "@/components/board/BoardView";
 import { useUIStore } from "@/store/useUIStore";
 import { MapWrapper } from "@/components/map/MapWrapper";
+import dynamic from "next/dynamic";
+
+const TaskCreateModal = dynamic(
+  () => import("@/components/task/TaskCreateModal").then(mod => mod.TaskCreateModal),
+  { ssr: false }
+);
 
 export default function Home() {
   const { viewMode } = useUIStore();
