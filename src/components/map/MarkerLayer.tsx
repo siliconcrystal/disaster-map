@@ -16,7 +16,7 @@ const TYPE_EMOJI: Record<string, string> = {
 export function MarkerLayer() {
   const map = useMap();
   const { tasks, setSelectedTaskId, selectedTaskId, getFilteredTasks, searchQuery, filters } = useTaskStore();
-  const { currentUserRole } = useUIStore();
+  const { currentUserRole, setSelectedMapLocation } = useUIStore();
 
   const [bounds, setBounds] = useState<[number, number, number, number] | undefined>(undefined);
   const [zoom, setZoom] = useState(13);
@@ -42,7 +42,7 @@ export function MarkerLayer() {
   const filteredTasks = useMemo(
     () => getFilteredTasks(currentUserRole),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchQuery, filters, currentUserRole]
+    [searchQuery, filters, currentUserRole, tasks]
   );
 
   const points = useMemo(() => {
@@ -144,6 +144,7 @@ export function MarkerLayer() {
             zIndexOffset={selectedTaskId === taskId ? 1000 : 0}
             eventHandlers={{
               click: () => {
+                setSelectedMapLocation(null);
                 setSelectedTaskId(taskId);
               }
             }}

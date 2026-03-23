@@ -48,13 +48,13 @@ const TaskCard = ({ task }: { task: Task }) => {
 };
 
 export function BoardView() {
-  const { getFilteredTasks, searchQuery, filters } = useTaskStore();
+  const { tasks, getFilteredTasks, searchQuery, filters } = useTaskStore();
   const { currentUserRole } = useUIStore();
 
   const filteredTasks = useMemo(
     () => getFilteredTasks(currentUserRole),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchQuery, filters, currentUserRole]
+    [searchQuery, filters, currentUserRole, tasks]
   );
 
   const columns = [

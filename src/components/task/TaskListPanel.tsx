@@ -22,6 +22,7 @@ const TYPE_EMOJI: Record<string, string> = {
 
 export function TaskListPanel() {
   const {
+    tasks,
     searchQuery,
     filters,
     setSelectedTaskId,
@@ -35,7 +36,7 @@ export function TaskListPanel() {
   const filteredTasks = useMemo(
     () => getFilteredTasks(currentUserRole),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchQuery, filters, currentUserRole]
+    [searchQuery, filters, currentUserRole, tasks]
   );
 
   const hasActiveFilters =

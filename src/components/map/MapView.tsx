@@ -10,6 +10,8 @@ import { PolygonLayer } from "./PolygonLayer";
 import { MapControls } from "./MapControls";
 import { ZoneDetailCard } from "../task/ZoneDetailCard";
 import { TaskDetailCard } from "../task/TaskDetailCard";
+import { MapTouchHandler } from "./MapTouchHandler";
+import { MapClickDetailCard } from "../task/MapClickDetailCard";
 
 
 
@@ -60,10 +62,12 @@ export default function MapView() {
 
         <MarkerLayer />
         <PolygonLayer />
+        <MapTouchHandler />
       </MapContainer>
 
       <ZoneDetailCard />
       <TaskDetailCard />
+      <MapClickDetailCard />
     </div>
   );
 }
