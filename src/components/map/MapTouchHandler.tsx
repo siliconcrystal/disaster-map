@@ -40,7 +40,6 @@ export function MapTouchHandler() {
 
   useMapEvents({
     click: handleInteract,
-    contextmenu: handleInteract,
   });
 
   if (!selectedMapLocation) return null;
