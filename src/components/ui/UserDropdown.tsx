@@ -118,13 +118,14 @@ export function UserDropdown() {
         {/* ✅ 角色名稱 badge（永遠顯示） */}
         <div
           className="
+            hidden sm:flex
             absolute -bottom-3 left-1/2 -translate-x-1/2
             min-w-[28px] h-5 px-1
             rounded-full
             bg-white dark:bg-slate-800
             border border-white dark:border-slate-900
             flex items-center justify-center
-            text-[10px] font-medium text-slate-700
+            text-[10px] font-medium text-slate-700 dark:text-slate-100
             shadow-md
             whitespace-nowrap
           "
