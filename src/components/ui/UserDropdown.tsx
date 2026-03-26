@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, LogIn, LogOut, ChevronRight, ChevronLeft, Check, AlertTriangle, Monitor, Sun, Moon } from "lucide-react";
+import {
+  User, LogIn, LogOut, ChevronRight, ChevronLeft,
+  Check, AlertTriangle, Monitor, Sun, Moon
+} from "lucide-react";
 import { useUIStore } from "@/store/useUIStore";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ROLES = [
-
+  { name: "預設", icon: "" }, // ✅ 新增預設
   { name: "指揮所", icon: "🎖️" },
   { name: "災民", icon: "🏡" },
   { name: "救難隊", icon: "🆘" },
@@ -23,21 +26,31 @@ const ROLES = [
 export function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<'main' | 'roles'>('main');
-
-  // ✅ 新增：登入狀態（關鍵）
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const { currentUserRole, setCurrentUserRole, setTaskCreateOpen, viewMode, setViewMode } = useUIStore();
+  const {
+    currentUserRole,
+    setCurrentUserRole,
+    setTaskCreateOpen,
+    viewMode,
+    setViewMode
+  } = useUIStore();
+
   const { mapCenter } = useTaskStore();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentTheme = theme === "system" ? resolvedTheme : theme;
 
-  // ✅ Avatar 只看登入狀態（不看角色）
   const avatarBg = isLoggedIn
     ? "bg-[url('/Avatar.png')]"
     : "bg-[url('/UnloginAvatar.png')]";
+
+  // ✅ 沒選 or 預設 → 顯示「預設」
+  const currentRoleName =
+    currentUserRole && currentUserRole !== ""
+      ? currentUserRole
+      : "預設";
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -55,13 +68,16 @@ export function UserDropdown() {
     }
   }, [isOpen]);
 
-  // ✅ 切角色：只改角色
   const handleRoleSelect = (role: string) => {
-    setCurrentUserRole(role);
+    // ✅ 選「預設」→ 清空
+    if (role === "預設") {
+      setCurrentUserRole("");
+    } else {
+      setCurrentUserRole(role);
+    }
     setIsOpen(false);
   };
 
-  // ✅ 登入/登出：只改登入狀態
   const handleLoginToggle = () => {
     setIsLoggedIn(prev => !prev);
     setIsOpen(false);
@@ -87,16 +103,35 @@ export function UserDropdown() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* ✅ Avatar */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-13 h-13 rounded-full 
-          ${avatarBg}
-          bg-cover bg-center
-          border border-white border-4 dark:border-slate-700  
-          shadow-xl flex items-center justify-center
-          hover:bg-blue-100/70 dark:hover:bg-slate-700 transition-colors`}
-      />
+      {/* Avatar */}
+      <div className="relative w-14 h-14">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-14 h-14 rounded-full 
+            ${avatarBg}
+            bg-cover bg-center
+            border border-white border-4 dark:border-slate-700  
+            shadow-xl flex items-center justify-center
+            hover:bg-blue-100/70 dark:hover:bg-slate-700 transition-colors`}
+        />
+
+        {/* ✅ 角色名稱 badge（永遠顯示） */}
+        <div
+          className="
+            absolute -bottom-3 left-1/2 -translate-x-1/2
+            min-w-[28px] h-5 px-1
+            rounded-full
+            bg-white dark:bg-slate-800
+            border border-white dark:border-slate-900
+            flex items-center justify-center
+            text-[10px] font-medium text-slate-700
+            shadow-md
+            whitespace-nowrap
+          "
+        >
+          {currentRoleName}
+        </div>
+      </div>
 
       <AnimatePresence>
         {isOpen && (
@@ -106,10 +141,10 @@ export function UserDropdown() {
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className="
-            absolute right-0 mt-3 w-[240px] rounded-2xl 
-            bg-white dark:bg-slate-900 border
-            border-slate-100 dark:border-slate-800 
-            shadow-xl overflow-hidden z-[9999] flex flex-col"
+              absolute right-0 mt-3 w-[240px] rounded-2xl 
+              bg-white dark:bg-slate-900 border
+              border-slate-100 dark:border-slate-800 
+              shadow-xl overflow-hidden z-[9999] flex flex-col"
           >
             {view === 'main' ? (
               <motion.div
@@ -142,7 +177,10 @@ export function UserDropdown() {
                 </button>
 
                 <button
-                  onClick={() => { setViewMode(viewMode === 'map' ? 'board' : 'map'); setIsOpen(false); }}
+                  onClick={() => {
+                    setViewMode(viewMode === 'map' ? 'board' : 'map');
+                    setIsOpen(false);
+                  }}
                   className="flex items-center gap-3 w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <Monitor className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
@@ -171,22 +209,21 @@ export function UserDropdown() {
                 <div className="px-5 py-2">
                   <button
                     onClick={handleLoginToggle}
-                    className="
-                    w-full py-2.5 
-                    text-slate-700 dark:text-slate-300 
-                    rounded-xl hover:bg-slate-200 
-                    border border-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2 text-[14px] font-bold"
+                    className="w-full py-2.5 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 border border-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2 text-[14px] font-bold"
                   >
                     {isLoggedIn ? (
-                      <><LogOut className="w-4 h-4 dark:text-slate-300" /> 登出</>
+                      <><LogOut className="w-4 h-4" /> 登出</>
                     ) : (
-                      <><LogIn className="w-4 h-4 dark:text-slate-300" /> 登入</>
+                      <><LogIn className="w-4 h-4" /> 登入</>
                     )}
                   </button>
 
-                  <p className="text-[11px] text-center text-slate-400 mt-2.5">
-                    登入以記住您的設定
-                  </p>
+                  {/* ✅ 只在未登入顯示 */}
+                  {!isLoggedIn && (
+                    <p className="text-[11px] text-center text-slate-400 mt-2.5">
+                      登入以記住您的設定
+                    </p>
+                  )}
                 </div>
               </motion.div>
             ) : (
@@ -213,10 +250,12 @@ export function UserDropdown() {
                       className="flex items-center justify-between w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-lg">{icon}</span>
+                        {icon && <span className="text-lg">{icon}</span>}
                         <span className="text-[15px] text-slate-700 dark:text-slate-300">{name}</span>
                       </div>
-                      {currentUserRole === name && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                      {currentRoleName === name && (
+                        <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                      )}
                     </button>
                   ))}
                 </div>
