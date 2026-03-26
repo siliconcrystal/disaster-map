@@ -29,7 +29,8 @@ export function MapControls() {
     <div className="absolute right-4 bottom-8 z-[1000] flex flex-col gap-2.5 pointer-events-auto">
       <button
         onClick={() => {
-          map.locate().on("locationfound", (e) => {
+          map.off("locationfound");
+          map.locate().once("locationfound", (e) => {
             map.flyTo(e.latlng, map.getZoom());
           });
         }}
