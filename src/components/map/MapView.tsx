@@ -6,10 +6,12 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useTheme } from "next-themes";
 import { MarkerLayer } from "./MarkerLayer";
+import { StationMarkerLayer } from "./StationMarkerLayer";
 import { PolygonLayer } from "./PolygonLayer";
 import { MapControls } from "./MapControls";
 import { ZoneDetailCard } from "../task/ZoneDetailCard";
 import { TaskDetailCard } from "../task/TaskDetailCard";
+import { StationDetailCard } from "../station/StationDetailCard";
 
 
 
@@ -59,11 +61,13 @@ export default function MapView() {
         <MapControls />
 
         <MarkerLayer />
+        <StationMarkerLayer />
         <PolygonLayer />
       </MapContainer>
 
       <ZoneDetailCard />
       <TaskDetailCard />
+      <StationDetailCard />
     </div>
   );
 }

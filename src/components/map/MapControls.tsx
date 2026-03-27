@@ -4,6 +4,7 @@ import { useMap } from "react-leaflet";
 import { Plus, Minus, Crosshair, Layers, Maximize2 } from "lucide-react";
 import { useUIStore } from "@/store/useUIStore";
 import { useTaskStore } from "@/store/useTaskStore";
+import { useStationStore } from "@/store/useStationStore";
 import L from "leaflet";
 import { useState } from "react";
 
@@ -11,12 +12,17 @@ export function MapControls() {
   const map = useMap();
   const { activeMapLayers, toggleMapLayer, mapType, setMapType } = useUIStore();
   const { tasks } = useTaskStore();
+  const { stations } = useStationStore();
   const [showToast, setShowToast] = useState(false);
   const [layerMenuOpen, setLayerMenuOpen] = useState(false);
 
   const handleFitAll = () => {
-    if (tasks.length === 0) return;
-    const bounds = L.latLngBounds(tasks.map(t => [t.lat, t.lng] as [number, number]));
+    const points: [number, number][] = tasks.map(t => [t.lat, t.lng]);
+    if (activeMapLayers.station) {
+      points.push(...stations.map(s => [s.lat, s.lng] as [number, number]));
+    }
+    if (points.length === 0) return;
+    const bounds = L.latLngBounds(points);
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15, animate: true });
   };
 
@@ -89,6 +95,7 @@ export function MapControls() {
                   <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-2">圖層顯示</span>
                   <div className="space-y-2.5">
                     {[
+                      { id: 'station', label: '救災據點' },
                       { id: 'safeZone', label: '避難區域' },
                       { id: 'ngoZone', label: 'NGO 中心' },
                       { id: 'restrictedZone', label: '禁止通行區域' },

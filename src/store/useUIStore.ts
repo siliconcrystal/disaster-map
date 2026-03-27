@@ -6,6 +6,7 @@ type MapLayers = {
   restrictedZone: boolean;
   waterLevel: boolean;
   terrain: boolean;
+  station: boolean;
 };
 
 type MapType = 'adaptive' | 'satellite' | 'streets';
@@ -46,6 +47,7 @@ export const useUIStore = create<UIState>((set) => ({
     restrictedZone: true,
     waterLevel: false,
     terrain: false,
+    station: true,
   },
   mapType: "streets",
   layerMenuOpen: false,
