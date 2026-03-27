@@ -27,13 +27,17 @@ const TaskCard = ({ task }: { task: Task }) => {
   return (
     <div
       onClick={() => setSelectedTaskId(task.id)}
-      className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-l dark:shadow-none border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all group"
+      className="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-l 
+      dark:shadow-none border border-slate-200 
+      dark:border-slate-700 cursor-pointer
+       hover:bg-slate-100/20 
+       dark:hover:bg-slate-100/20  transition-all group"
     >
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xl"> {TYPE_EMOJI[task.type] || '📍'}</span>
         <h3 className="font-bold text-slate-800 dark:text-slate-100 line-clamp-1">{task.title}</h3>
       </div>
-      <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-3 leading-relaxed">{task.description}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-1 leading-relaxed">{task.description}</p>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1 text-[11px] font-medium text-slate-400 dark:text-slate-500">
           <MapPin className="w-3.5 h-3.5" />
@@ -72,7 +76,7 @@ export function BoardView() {
           return (
             <div key={col.id} className="w-[320px] flex flex-col h-full bg-slate-100/50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200/50 dark:border-slate-800/50">
               <div className="flex items-center justify-between mb-4 px-1">
-                <h2 className="text-[15px] font-bold text-slate-700 dark:text-slate-200 tracking-wide">{col.label}</h2>
+                <h2 className="text-[16px] font-bold text-slate-700 dark:text-slate-200 tracking-wide">{col.label}</h2>
                 <div className="bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-black px-2.5 py-1 rounded-full">{colTasks.length}</div>
               </div>
 
