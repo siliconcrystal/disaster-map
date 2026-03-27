@@ -1,0 +1,110 @@
+{
+  "$schema": "Acceptance Criteria for PR #2: Seed Anonymized Task Data",
+  "pr": {
+    "number": 2,
+    "branch": "feat/seed-anonymized-data",
+    "title": "feat: seed anonymized Guangfu disaster data",
+    "url": "https://github.com/siliconcrystal/disaster-map/pull/2"
+  },
+  "devServer": {
+    "command": "npm run dev -- -p 3456",
+    "url": "http://localhost:3456",
+    "note": "Dev server may already be running. Check before starting."
+  },
+  "happyPaths": [
+    {
+      "id": "SD-01",
+      "name": "Map loads and centers on Guangfu",
+      "steps": [
+        "Navigate to http://localhost:3456",
+        "Wait for map tiles to load (Leaflet tile layer visible)",
+        "Verify map is centered approximately on lat 23.67, lng 121.43 (Guangfu, Hualien)"
+      ],
+      "expected": "Map renders with tile layer. Center is NOT in Tainan (23.00, 120.21) — it should be in Hualien/Guangfu area.",
+      "verification": "Check the visible area includes 花蓮縣光復鄉. Tile layer is not blank."
+    },
+    {
+      "id": "SD-02",
+      "name": "Task markers render with clustering",
+      "steps": [
+        "On the map view, observe marker clusters",
+        "Zoom in to see individual markers",
+        "Verify markers are round with emoji icons"
+      ],
+      "expected": "Multiple marker clusters visible. Individual markers show emoji (🪏🔧🚜💪👥🛵 etc.). Total data has 392 tasks.",
+      "verification": "At least 3+ cluster bubbles or individual markers visible on initial load."
+    },
+    {
+      "id": "SD-03",
+      "name": "Click task marker opens TaskDetailCard",
+      "steps": [
+        "Zoom into the map until individual (non-clustered) markers appear",
+        "Click on any round task marker",
+        "Observe the detail card that slides in from the right (desktop) or bottom (mobile)"
+      ],
+      "expected": "TaskDetailCard appears with: title, description, address (花蓮縣光復鄉...), reporter name, contact phone.",
+      "verification": "Card is visible and contains Chinese text content."
+    },
+    {
+      "id": "SD-04",
+      "name": "Task detail shows obviously fake PII",
+      "steps": [
+        "With a TaskDetailCard open (from SD-03), inspect the reporter name and contact fields"
+      ],
+      "expected": "Reporter name matches pattern: {surname}小{animal} (e.g. 王小虎, 陳小貓, 郭小鯨). Contact phone matches pattern: 0987-654-{abc} (alphabetic suffix like 0987-654-sdg). These are obviously fake — NOT real-looking names or phone numbers.",
+      "verification": "Name contains '小' followed by an animal character (虎貓鯨兔熊鹿鷹狐龍馬蛙鶴). Phone starts with '0987-654-' followed by 3 letters."
+    },
+    {
+      "id": "SD-05",
+      "name": "Task detail shows 3 history entries",
+      "steps": [
+        "With a TaskDetailCard open, click to expand full detail modal (if applicable)",
+        "Look for history/timeline section"
+      ],
+      "expected": "Exactly 3 history entries visible: (1) type 'system' — '案件提交並確認', (2) type 'comment' — contextual message, (3) type 'status' — status update message.",
+      "verification": "3 history items rendered. At least one contains '案件提交並確認'. At least one is a comment type (not system/status)."
+    },
+    {
+      "id": "SD-06",
+      "name": "Board view shows 4 columns with tasks",
+      "steps": [
+        "Find and click the view mode toggle to switch to board view",
+        "Observe the kanban-style board layout"
+      ],
+      "expected": "4 columns visible: 已回報, 招募中, 進行中, 已完成. Each column has task cards with count badges. Distribution is roughly: reported ~100, recruiting ~83, in_progress ~64, done ~145.",
+      "verification": "All 4 columns rendered. Each column shows a non-zero count badge. No column says '目前無任務'."
+    },
+    {
+      "id": "SD-07",
+      "name": "Search filters tasks",
+      "steps": [
+        "Find the search input field",
+        "Type '水電' into the search bar",
+        "Observe the search results panel or filtered markers"
+      ],
+      "expected": "Tasks matching '水電' appear in results. These are utility-type tasks from the HR data.",
+      "verification": "At least 5+ results appear. Results contain '水電' in title or description."
+    },
+    {
+      "id": "SD-08",
+      "name": "Board view task cards show correct data",
+      "steps": [
+        "In board view, examine task cards in any column",
+        "Check that cards show: emoji icon, title, description snippet, address, urgency badge"
+      ],
+      "expected": "Task cards render with: type emoji (🪏🔧🚜 etc.), title with address and role name, description with 需求類型, address with MapPin icon, urgency badge (緊急/中等/一般).",
+      "verification": "Cards are not blank. At least one card in each visible column has content."
+    },
+    {
+      "id": "SD-09",
+      "name": "Zone polygons visible when toggled",
+      "steps": [
+        "On the map view, open the layer menu (layers icon, bottom-right)",
+        "Ensure '避難區域' toggle is ON",
+        "Look for colored polygon overlays on the map"
+      ],
+      "expected": "At least one colored polygon overlay visible on the map in the Guangfu area.",
+      "verification": "Polygon layer renders without console errors."
+    }
+  ]
+}
