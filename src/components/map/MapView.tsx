@@ -1,43 +1,45 @@
-"use client";
+'use client';
 
-import { MapContainer, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { useTaskStore } from "@/store/useTaskStore";
-import { useUIStore } from "@/store/useUIStore";
-import { useTheme } from "next-themes";
-import { MarkerLayer } from "./MarkerLayer";
-import { PolygonLayer } from "./PolygonLayer";
-import { MapControls } from "./MapControls";
-import { ZoneDetailCard } from "../task/ZoneDetailCard";
-import { TaskDetailCard } from "../task/TaskDetailCard";
-import { MapTouchHandler } from "./MapTouchHandler";
-import { MapClickDetailCard } from "../task/MapClickDetailCard";
-
-
+import { useTaskStore } from '@/store/useTaskStore';
+import { useUIStore } from '@/store/useUIStore';
+import 'leaflet/dist/leaflet.css';
+import { useTheme } from 'next-themes';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapClickDetailCard } from '../task/MapClickDetailCard';
+import { TaskDetailCard } from '../task/TaskDetailCard';
+import { ZoneDetailCard } from '../task/ZoneDetailCard';
+import { DisasterZoneLayer } from './DisasterZoneLayer';
+import { MapControls } from './MapControls';
+import { MapTouchHandler } from './MapTouchHandler';
+import { MarkerLayer } from './MarkerLayer';
+import { PolygonLayer } from './PolygonLayer';
+import { ResourceMarkerLayer } from './ResourceMarkerLayer';
 
 export default function MapView() {
   const { mapCenter, mapZoom } = useTaskStore(); // mapCenter and mapZoom remain from useTaskStore
   const { activeMapLayers, mapType } = useUIStore(); // Added destructuring from useUIStore
   const { theme, resolvedTheme } = useTheme();
 
-  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const currentTheme = theme === 'system' ? resolvedTheme : theme;
 
   // Replaced tileUrl variable with getTileUrl function
   const getTileUrl = () => {
     if (mapType === 'satellite') {
-      return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+      return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     }
     if (mapType === 'streets') {
-      return "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+      return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
     }
     // Adaptive Default
-    return currentTheme === "dark"
-      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-      : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+    return currentTheme === 'dark'
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
   };
 
   return (
-    <div className="w-full h-full relative overflow-hidden"> {/* Changed className */}
+    <div className="w-full h-full relative overflow-hidden">
+      {' '}
+      {/* Changed className */}
       <MapContainer
         center={mapCenter}
         zoom={mapZoom}
@@ -60,11 +62,16 @@ export default function MapView() {
         )}
         <MapControls />
 
-        <MarkerLayer />
+        {/* 災害區域圖層（底層） */}
+        <DisasterZoneLayer />
+        {/* 任務區域圖層 */}
         <PolygonLayer />
+        {/* 資源點位圖層 */}
+        <ResourceMarkerLayer />
+        {/* 任務 Marker 圖層（最上層） */}
+        <MarkerLayer />
         <MapTouchHandler />
       </MapContainer>
-
       <ZoneDetailCard />
       <TaskDetailCard />
       <MapClickDetailCard />
