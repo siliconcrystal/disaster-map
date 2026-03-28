@@ -93,6 +93,7 @@ function MiniMapMarkers({ type }: { type: TaskType }) {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export interface LocationPickerMapProps {
+  address: string | null;
   center: [number, number];
   type: TaskType;
   onChange: (coords: [number, number]) => void;
@@ -100,6 +101,7 @@ export interface LocationPickerMapProps {
 }
 
 export function LocationPickerMap({
+  address,
   center,
   type,
   onChange,
@@ -110,7 +112,6 @@ export function LocationPickerMap({
   const currentTheme = theme === 'system' ? resolvedTheme : theme;
 
   const [isGeocoding, setIsGeocoding] = useState(false);
-  const [resolvedAddress, setResolvedAddress] = useState('');
 
   const getTileUrl = () => {
     if (mapType === 'satellite')
@@ -140,7 +141,6 @@ export function LocationPickerMap({
           a.house_number,
         ].filter(Boolean);
         const formatted = parts.length > 0 ? parts.join('') : data.display_name || '';
-        setResolvedAddress(formatted);
         onAddressResolve(formatted);
       }
     } catch (err) {
@@ -150,7 +150,6 @@ export function LocationPickerMap({
     }
   };
 
-  // Stable throttled fn: leading=false, trailing=true → fires at most once per 2s
   const throttledGeocode = useRef(
     throttle((lat: number, lng: number) => reverseGeocode(lat, lng), 2000, {
       leading: false,
@@ -158,15 +157,9 @@ export function LocationPickerMap({
     }),
   );
 
-  // When center changes (from parent), kick off geocoding and clear stale address
-  useEffect(() => {
-    setResolvedAddress('');
-    setIsGeocoding(true);
-    throttledGeocode.current(center[0], center[1]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [center]);
-
   const handleMapMove = (pos: [number, number]) => {
+    setIsGeocoding(true);
+    throttledGeocode.current(pos[0], pos[1]);
     onChange(pos);
   };
 
@@ -212,8 +205,8 @@ export function LocationPickerMap({
             <span className="inline-block w-3 h-3 rounded-full border-2 border-slate-300 border-t-blue-500 animate-spin" />
             解析位址中…
           </p>
-        ) : resolvedAddress ? (
-          <p className="text-xs text-slate-500 dark:text-slate-400">📍 {resolvedAddress}</p>
+        ) : address ? (
+          <p className="text-xs text-slate-500 dark:text-slate-400">📍 {address}</p>
         ) : null}
       </div>
     </div>

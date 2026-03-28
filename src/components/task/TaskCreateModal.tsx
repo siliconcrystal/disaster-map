@@ -8,15 +8,22 @@ import { Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function TaskCreateModal() {
-  const { isTaskCreateOpen, setTaskCreateOpen, newTaskCoords, setSelectedMapLocation } =
-    useUIStore();
+  const {
+    isTaskCreateOpen,
+    setTaskCreateOpen,
+    newTaskCoords,
+    setSelectedMapLocation,
+    resolvedAddress,
+    setResolvedAddress,
+  } = useUIStore();
   const { addTask } = useTaskStore();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [type, setType] = useState<TaskType>('support');
   const [urgency, setUrgency] = useState<Urgency>('medium');
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState(resolvedAddress ?? '');
+  const [searchInput, setSearchInput] = useState('');
   const [localCoords, setLocalCoords] = useState<[number, number] | null>(newTaskCoords);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -26,8 +33,13 @@ export function TaskCreateModal() {
     } else {
       setLocalCoords(null);
       setAddress('');
+      setSearchInput('');
     }
-  }, [isTaskCreateOpen, newTaskCoords]);
+  }, [isTaskCreateOpen, newTaskCoords]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (resolvedAddress) setAddress(resolvedAddress);
+  }, [resolvedAddress]);
 
   if (!isTaskCreateOpen || !localCoords) return null;
 
@@ -49,17 +61,19 @@ export function TaskCreateModal() {
 
     setTaskCreateOpen(false);
     setSelectedMapLocation(null);
+    setResolvedAddress(null);
     setTitle('');
     setDescription('');
     setAddress('');
+    setSearchInput('');
   };
 
   const handleSearch = async () => {
-    if (!address) return;
+    if (!searchInput.trim()) return;
     setIsSearching(true);
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`,
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(searchInput)}`,
       );
       const data = await res.json();
       if (data && data.length > 0) {
@@ -157,8 +171,8 @@ export function TaskCreateModal() {
             </p>
             <div className="flex gap-2">
               <input
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -166,7 +180,7 @@ export function TaskCreateModal() {
                   }
                 }}
                 className="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
-                placeholder="輸入地址..."
+                placeholder="搜尋地址..."
               />
               <button
                 type="button"
@@ -183,6 +197,7 @@ export function TaskCreateModal() {
             </div>
 
             <LocationPickerMap
+              address={resolvedAddress}
               center={localCoords}
               type={type}
               onChange={(coords) => setLocalCoords(coords)}

@@ -17,6 +17,7 @@ interface UIState {
   isTaskCreateOpen: boolean;
   newTaskCoords: [number, number] | null;
   selectedMapLocation: [number, number] | null;
+  resolvedAddress: string | null;
   activeMapLayers: MapLayers;
   mapType: MapType;
   layerMenuOpen: boolean;
@@ -29,6 +30,7 @@ interface UIState {
   setTaskFullDetailOpen: (isOpen: boolean) => void;
   setTaskCreateOpen: (isOpen: boolean, coords?: [number, number] | null) => void;
   setSelectedMapLocation: (loc: [number, number] | null) => void;
+  setResolvedAddress: (address: string | null) => void;
   toggleMapLayer: (layer: keyof MapLayers) => void;
   setMapType: (type: MapType) => void;
   setLayerMenuOpen: (open: boolean) => void;
@@ -43,6 +45,7 @@ export const useUIStore = create<UIState>((set) => ({
   isTaskCreateOpen: false,
   newTaskCoords: null,
   selectedMapLocation: null,
+  resolvedAddress: null,
   activeMapLayers: {
     safeZone: true,
     ngoZone: false,
@@ -50,7 +53,7 @@ export const useUIStore = create<UIState>((set) => ({
     waterLevel: false,
     terrain: false,
   },
-  mapType: "streets",
+  mapType: 'streets',
   layerMenuOpen: false,
   currentUserRole: null, // null means not logged in
   viewMode: 'map',
@@ -58,14 +61,17 @@ export const useUIStore = create<UIState>((set) => ({
   setAdvancedFilterOpen: (isOpen) => set({ isAdvancedFilterOpen: isOpen }),
   setTaskDetailOpen: (isOpen) => set({ isTaskDetailOpen: isOpen }),
   setTaskFullDetailOpen: (isOpen) => set({ isTaskFullDetailOpen: isOpen }),
-  setTaskCreateOpen: (isOpen, coords = null) => set({ isTaskCreateOpen: isOpen, newTaskCoords: coords }),
-  setSelectedMapLocation: (loc) => set({ selectedMapLocation: loc }),
-  toggleMapLayer: (layer) => set((state) => ({
-    activeMapLayers: {
-      ...state.activeMapLayers,
-      [layer]: !state.activeMapLayers[layer]
-    }
-  })),
+  setTaskCreateOpen: (isOpen, coords = null) =>
+    set({ isTaskCreateOpen: isOpen, newTaskCoords: coords }),
+  setSelectedMapLocation: (loc) => set({ selectedMapLocation: loc, resolvedAddress: null }),
+  setResolvedAddress: (address) => set({ resolvedAddress: address }),
+  toggleMapLayer: (layer) =>
+    set((state) => ({
+      activeMapLayers: {
+        ...state.activeMapLayers,
+        [layer]: !state.activeMapLayers[layer],
+      },
+    })),
   setMapType: (type) => set({ mapType: type }),
   setLayerMenuOpen: (open) => set({ layerMenuOpen: open }),
   setCurrentUserRole: (role) => set({ currentUserRole: role }),
