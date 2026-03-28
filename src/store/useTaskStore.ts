@@ -192,9 +192,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       // Assignee filter
       if (filters.assignee === 'my_role') {
         // Show tasks matching user's role type — only filter if role has a mapped type
+        // Keys are Chinese role names from UserDropdown ROLES
         const roleTypeMap: Record<string, string> = {
-          medic: 'medical', rescuer: 'rescue', inspector: 'inspection',
-          supplier: 'supply', engineer: 'utility',
+          '消防隊': 'fire', '救難隊': 'rescue', '醫療團隊': 'medical',
         };
         if (role && roleTypeMap[role] && t.type !== roleTypeMap[role]) return false;
       } else if (filters.assignee === 'assigned') {

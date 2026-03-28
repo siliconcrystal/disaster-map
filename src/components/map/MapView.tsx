@@ -9,7 +9,6 @@ import { MarkerLayer } from "./MarkerLayer";
 import { PolygonLayer } from "./PolygonLayer";
 import { MapControls } from "./MapControls";
 import { ZoneDetailCard } from "../task/ZoneDetailCard";
-import { TaskDetailCard } from "../task/TaskDetailCard";
 
 
 
@@ -63,7 +62,6 @@ export default function MapView() {
       </MapContainer>
 
       <ZoneDetailCard />
-      <TaskDetailCard />
     </div>
   );
 }

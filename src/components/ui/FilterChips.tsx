@@ -111,7 +111,7 @@ export function FilterDropdown({
 
   const handleSelect = (val: string) => {
     if (requiresAuthValues.includes(val) && !currentUserRole) {
-      alert("此功能需要登入，請點擊右上角頭像進行登入。");
+      alert("請先選擇您的角色，點擊右上角頭像 → 切換角色。");
       setIsOpen(false);
       return;
     }

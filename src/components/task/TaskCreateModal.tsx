@@ -86,7 +86,7 @@ export function TaskCreateModal() {
                 <option value="fire">🔥 火災</option>
                 <option value="rescue">🚨 搜救</option>
                 <option value="danger">🚧 危險區域</option>
-                <option value="people:">👥 人員統計</option>
+                <option value="people">👥 人員統計</option>
                 <option value="inspection">⛑️ 建築檢查</option>
                 <option value="medical">🚑 醫療</option>
                 <option value="supply">📦 物資</option>

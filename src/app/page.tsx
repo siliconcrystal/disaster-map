@@ -6,6 +6,7 @@ import { AdvancedFilterModal } from "@/components/ui/AdvancedFilterModal";
 import { TaskListPanel } from "@/components/task/TaskListPanel";
 import { TaskDetailCard } from "@/components/task/TaskDetailCard";
 import { TaskCreateModal } from "@/components/task/TaskCreateModal";
+import { TaskFullDetailModal } from "@/components/task/TaskFullDetailModal";
 import { AreaSummaryCard } from "@/components/ui/AreaSummaryCard";
 import { BoardView } from "@/components/board/BoardView";
 import { useUIStore } from "@/store/useUIStore";
@@ -30,6 +31,7 @@ export default function Home() {
       )}
       
       <TaskDetailCard />
+      <TaskFullDetailModal />
       <TaskCreateModal />
       <AdvancedFilterModal />
     </main>
