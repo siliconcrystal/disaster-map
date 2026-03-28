@@ -1,0 +1,139 @@
+{
+  "$schema": "Acceptance Criteria for PR #4: Station Layer POC",
+  "pr": {
+    "number": 4,
+    "branch": "feat/station-layer-poc",
+    "title": "feat: Station layer POC — separate entity for disaster relief POIs",
+    "url": "https://github.com/siliconcrystal/disaster-map/pull/4"
+  },
+  "devServer": {
+    "command": "npm run dev -- -p 3456",
+    "url": "http://localhost:3456",
+    "note": "Must be on branch feat/station-layer-poc which includes PR #2 changes."
+  },
+  "happyPaths": [
+    {
+      "id": "SL-01",
+      "name": "Station markers render on map",
+      "steps": [
+        "Navigate to http://localhost:3456",
+        "Wait for map to load",
+        "Observe that there are TWO visual types of markers on the map"
+      ],
+      "expected": "Round markers (tasks) AND rounded-square markers (stations) both visible. Station markers have amber/warm tint background. Task markers have white background. Station markers are slightly smaller (36px vs 40px).",
+      "verification": "Both marker shapes are present on the map. Station markers use rounded-xl (iOS icon style), not rounded-full."
+    },
+    {
+      "id": "SL-02",
+      "name": "Station layer toggle in layer menu",
+      "steps": [
+        "Click the layers icon (bottom-right of map)",
+        "Look for '救災據點' in the layer toggle list",
+        "Verify it has a toggle switch and is ON by default"
+      ],
+      "expected": "'救災據點' appears as the FIRST item in the layer toggles section. Toggle switch is in the ON position (blue).",
+      "verification": "'救災據點' text visible in layer menu. Toggle is active/blue."
+    },
+    {
+      "id": "SL-03",
+      "name": "Toggle station layer OFF hides station markers",
+      "steps": [
+        "Open layer menu",
+        "Click '救災據點' toggle to turn it OFF",
+        "Observe the map"
+      ],
+      "expected": "All rounded-square (station) markers disappear from the map. Round (task) markers remain visible.",
+      "verification": "Only round task markers remain on map after toggle OFF."
+    },
+    {
+      "id": "SL-04",
+      "name": "Toggle station layer ON restores station markers",
+      "steps": [
+        "With station layer OFF from SL-03, click '救災據點' toggle again to turn ON",
+        "Observe the map"
+      ],
+      "expected": "Rounded-square station markers reappear on the map alongside task markers.",
+      "verification": "Both marker types visible again."
+    },
+    {
+      "id": "SL-05",
+      "name": "Click station marker opens StationDetailCard",
+      "steps": [
+        "Zoom into the map until individual station markers (rounded-square) appear",
+        "Click on a rounded-square station marker",
+        "Observe the detail card that appears"
+      ],
+      "expected": "StationDetailCard slides in with amber-tinted header. Shows: station name, type label with emoji (e.g. '🚿 洗澡站', '🚻 廁所', '🏥 醫療站'), status badge (開放中/已關閉), address, and optionally contact info and resources.",
+      "verification": "Card header has amber tint (not white like task card). Type emoji is from station set (🚿🚻🏥📦🏠🏨💧🔧), NOT task set (🔥🚨🚧👥⛑️🚑🪏🚜🔧💪🛵)."
+    },
+    {
+      "id": "SL-06",
+      "name": "StationDetailCard shows station-specific fields",
+      "steps": [
+        "With a StationDetailCard open (from SL-05), inspect the content sections"
+      ],
+      "expected": "Card shows: (1) Address section with coordinates, (2) Status indicator (開放中 with green dot or 已關閉 with red dot). May also show: contact info, operating hours, resources list, notes. Card does NOT show: urgency badge, history timeline, feedback counts, '我能前往協助' button — those are task-only concepts.",
+      "verification": "No urgency badge (緊急/中等/一般) visible. No history timeline. Status uses colored dot indicator."
+    },
+    {
+      "id": "SL-07",
+      "name": "Mutual exclusion: clicking task closes station card",
+      "steps": [
+        "Click a station marker to open StationDetailCard",
+        "Then click a task marker (round shape) on the map"
+      ],
+      "expected": "StationDetailCard closes. TaskDetailCard opens instead. Only one detail card visible at a time.",
+      "verification": "After clicking task, station card is gone. Task card is visible."
+    },
+    {
+      "id": "SL-08",
+      "name": "Mutual exclusion: clicking station closes task card",
+      "steps": [
+        "Click a task marker to open TaskDetailCard",
+        "Then click a station marker (rounded-square shape) on the map"
+      ],
+      "expected": "TaskDetailCard closes. StationDetailCard opens instead. Only one detail card visible at a time.",
+      "verification": "After clicking station, task card is gone. Station card is visible."
+    },
+    {
+      "id": "SL-09",
+      "name": "Close StationDetailCard via X button",
+      "steps": [
+        "With StationDetailCard open, click the X (close) button in the top-right of the card"
+      ],
+      "expected": "StationDetailCard closes. Map returns to normal state with no card visible.",
+      "verification": "No detail card visible after clicking X."
+    },
+    {
+      "id": "SL-10",
+      "name": "Station clusters expand on click",
+      "steps": [
+        "At a zoom level where station markers cluster (zoomed out)",
+        "Click on a station cluster bubble (rounded-square with number)"
+      ],
+      "expected": "Map zooms in to expand the cluster, showing individual station markers.",
+      "verification": "Zoom level increases after clicking cluster. More individual markers visible."
+    },
+    {
+      "id": "SL-11",
+      "name": "Fit-all button includes stations",
+      "steps": [
+        "Ensure station layer is ON",
+        "Click the fit-all button (Maximize2 icon, bottom-right controls)",
+        "Observe the map bounds"
+      ],
+      "expected": "Map adjusts to show ALL markers (both tasks and stations). If stations are spread wider than tasks, the view should be wider than task-only bounds.",
+      "verification": "Map bounds change after clicking. Both task and station markers are within visible area."
+    },
+    {
+      "id": "SL-12",
+      "name": "Station resources render in detail card",
+      "steps": [
+        "Find and click a station that has resources (e.g. a restroom station — '廁所' type often has resources like '流動廁所(無障礙)')",
+        "Look for the resources section in StationDetailCard"
+      ],
+      "expected": "Resources section shows a list with resource name, amount, and unit (e.g. '流動廁所(無障礙) — 2 座').",
+      "verification": "At least one resource item rendered with name and quantity."
+    }
+  ]
+}
