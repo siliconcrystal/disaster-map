@@ -1,34 +1,54 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useTaskStore } from "@/store/useTaskStore";
-import { Pin, ChevronUp } from "lucide-react";
+import { useTaskStore } from '@/store/useTaskStore';
+import { ChevronUp, Pin } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 export function AreaSummaryCard() {
   const { tasks, setMapCenter, setMapZoom, setSelectedTaskId } = useTaskStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        setIsCollapsed(true);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   const handlePinClick = (type: string) => {
-    const task = tasks.find(t => t.type === type);
+    const task = tasks.find((t) => t.type === type);
     if (task) {
       setMapCenter([task.lat, task.lng]);
       setMapZoom(16);
       setSelectedTaskId(task.id);
     } else {
-      alert("目前畫面上無此類型任務可定位");
+      alert('目前畫面上無此類型任務可定位');
     }
   };
 
   return (
-    <div className={`absolute top-[136px] left-4 right-20 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] backdrop-blur rounded-xl shadow-l transition-all duration-300 overflow-hidden p-2`}>
+    <div
+      ref={cardRef}
+      className={`absolute top-[136px] left-4 right-20 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] backdrop-blur rounded-xl shadow-l transition-all duration-300 overflow-hidden p-2`}
+    >
       <div
         className="flex items-center justify-between cursor-pointer px-1"
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={() => setIsCollapsed((prev) => !prev)}
       >
         <div className="flex items-center gap-1.5">
           <span className="text-lg">🏛️</span>
-          <h2 className="text-[15px] font-bold text-slate-800 dark:text-slate-500 tracking-wide">台南災害應變中心</h2>
-          <button className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-bold border border-red-100 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors ml-1">
+          <h2 className="text-[15px] font-bold text-slate-800 dark:text-slate-500 tracking-wide">
+            台南災害應變中心
+          </h2>
+          {/* 公告按鈕：點擊不收合卡片 */}
+          <button
+            className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-bold border border-red-100 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors ml-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
@@ -37,7 +57,9 @@ export function AreaSummaryCard() {
           </button>
         </div>
         <button className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-          <ChevronUp className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
+          <ChevronUp
+            className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
+          />
         </button>
       </div>
 
