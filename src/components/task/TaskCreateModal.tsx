@@ -1,108 +1,14 @@
 'use client';
 
+import { LocationPickerMap } from '@/components/map/LocationPickerMap';
 import { generateMockTask, useTaskStore } from '@/store/useTaskStore';
 import { useUIStore } from '@/store/useUIStore';
 import { TaskType, Urgency } from '@/types/task';
-import L from 'leaflet';
-import { MapPin, Search, X } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet';
-
-function MapRecenter({ center }: { center: [number, number] }) {
-  const map = useMap();
-  useEffect(() => {
-    if (!map) return;
-    const currentCenter = map.getCenter();
-    const dLat = Math.abs(currentCenter.lat - center[0]);
-    const dLng = Math.abs(currentCenter.lng - center[1]);
-    if (dLat > 0.0001 || dLng > 0.0001) {
-      map.setView(center, map.getZoom(), { animate: true });
-    }
-  }, [center, map]);
-  return null;
-}
-
-const TYPE_EMOJI: Record<string, string> = {
-  fire: '🔥',
-  rescue: '🚨',
-  danger: '🚧',
-  people: '👥',
-  inspection: '⛑️',
-  medical: '🚑',
-  supply: '📦',
-  cleanup: '🪏',
-  heavy: '🚜',
-  utility: '🔧',
-  support: '💪',
-  transport: '🛵',
-};
-
-const miniIconCache: Record<string, L.DivIcon> = {};
-
-const getMiniIcon = (type: string) => {
-  if (miniIconCache[type]) return miniIconCache[type];
-  const emoji = TYPE_EMOJI[type] || '📍';
-  const html = `<div class="flex items-center justify-center w-6 h-6 rounded-full bg-white/70 dark:bg-slate-800/70 shadow border border-slate-200 dark:border-slate-700 text-[10px] opacity-80 backdrop-blur-sm">
-      ${emoji}
-    </div>`;
-  const icon = L.divIcon({
-    html,
-    className: 'custom-marker-icon bg-transparent border-0',
-    iconSize: L.point(24, 24),
-    iconAnchor: [12, 12],
-  });
-  miniIconCache[type] = icon;
-  return icon;
-};
-
-function MiniMapMarkers({ type }: { type: TaskType }) {
-  const { tasks } = useTaskStore();
-
-  const map = useMap();
-  const [bounds, setBounds] = useState<L.LatLngBounds | null>(null);
-
-  useEffect(() => {
-    setBounds(map.getBounds());
-    const updateBounds = () => setBounds(map.getBounds());
-    map.on('moveend', updateBounds);
-    return () => {
-      map.off('moveend', updateBounds);
-    };
-  }, [map]);
-
-  if (!bounds) return null;
-
-  return (
-    <>
-      {tasks
-        .filter((task) => task.type === type)
-        .map((task) => {
-          if (!bounds.contains([task.lat, task.lng])) return null;
-          return (
-            <Marker
-              key={`mini-${task.id}`}
-              position={[task.lat, task.lng]}
-              icon={getMiniIcon(task.type)}
-              interactive={false}
-            />
-          );
-        })}
-    </>
-  );
-}
-
-function MapCenterListener({ onChange }: { onChange: (pos: [number, number]) => void }) {
-  const map = useMapEvents({
-    move: () => {
-      onChange([map.getCenter().lat, map.getCenter().lng]);
-    },
-  });
-  return null;
-}
 
 export function TaskCreateModal() {
-  const { isTaskCreateOpen, setTaskCreateOpen, newTaskCoords, mapType, setSelectedMapLocation } =
+  const { isTaskCreateOpen, setTaskCreateOpen, newTaskCoords, setSelectedMapLocation } =
     useUIStore();
   const { addTask } = useTaskStore();
 
@@ -111,32 +17,19 @@ export function TaskCreateModal() {
   const [type, setType] = useState<TaskType>('support');
   const [urgency, setUrgency] = useState<Urgency>('medium');
   const [address, setAddress] = useState('');
-  const [localCoords, setLocalCoords] = useState<[number, number] | null>(null);
+  const [localCoords, setLocalCoords] = useState<[number, number] | null>(newTaskCoords);
   const [isSearching, setIsSearching] = useState(false);
-  const { theme, resolvedTheme } = useTheme();
-  const currentTheme = theme === 'system' ? resolvedTheme : theme;
-
-  const getTileUrl = () => {
-    if (mapType === 'satellite')
-      return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-    if (mapType === 'streets')
-      return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-    return currentTheme === 'dark'
-      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-  };
 
   useEffect(() => {
     if (isTaskCreateOpen && newTaskCoords) {
       setLocalCoords(newTaskCoords);
     } else {
       setLocalCoords(null);
+      setAddress('');
     }
   }, [isTaskCreateOpen, newTaskCoords]);
 
-  if (!isTaskCreateOpen || !newTaskCoords) return null;
-
-  const coordsToUse = localCoords || newTaskCoords;
+  if (!isTaskCreateOpen || !localCoords) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,9 +37,9 @@ export function TaskCreateModal() {
     const newTaskMockData = generateMockTask({
       title: title || '新任務回報',
       description: description || '無詳細描述',
-      lat: coordsToUse[0],
-      lng: coordsToUse[1],
-      address: address || `${coordsToUse[0].toFixed(5)}, ${coordsToUse[1].toFixed(5)}`,
+      lat: localCoords[0],
+      lng: localCoords[1],
+      address: address || `${localCoords[0].toFixed(5)}, ${localCoords[1].toFixed(5)}`,
       type,
       urgency,
       status: 'reported',
@@ -289,38 +182,12 @@ export function TaskCreateModal() {
               </button>
             </div>
 
-            {/* 地圖示意區塊 */}
-            <div className="mt-3 h-52 w-full border border-slate-300 dark:border-slate-700 rounded-xl relative overflow-hidden">
-              <MapContainer
-                center={coordsToUse}
-                zoom={16}
-                className="w-full h-full z-0"
-                zoomControl={false}
-                attributionControl={false}
-              >
-                <TileLayer
-                  key={mapType + currentTheme}
-                  url={getTileUrl()}
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                />
-                <MapCenterListener onChange={(pos) => setLocalCoords(pos)} />
-                <MapRecenter center={coordsToUse} />
-                <MiniMapMarkers type={type} />
-              </MapContainer>
-              {/* Pin 完全置中 */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[1000] drop-shadow-md">
-                <MapPin
-                  className="text-blue-500 w-8 h-8 -mt-8"
-                  fill="currentColor"
-                  stroke="white"
-                  strokeWidth={1.5}
-                />
-              </div>
-            </div>
-
-            <p className="mt-1 text-xs text-slate-400">
-              座標位置：({coordsToUse[0].toFixed(5)}, {coordsToUse[1].toFixed(5)})
-            </p>
+            <LocationPickerMap
+              center={localCoords}
+              type={type}
+              onChange={(coords) => setLocalCoords(coords)}
+              onAddressResolve={(resolved) => setAddress((prev) => (prev === '' ? resolved : prev))}
+            />
           </div>
 
           {/* 描述 */}
