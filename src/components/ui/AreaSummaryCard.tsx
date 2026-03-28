@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTaskStore } from "@/store/useTaskStore";
-import { Pin, ChevronUp } from "lucide-react";
+import { Pin, ChevronUp, Megaphone } from "lucide-react";
 
 export function AreaSummaryCard() {
   const { tasks, setMapCenter, setMapZoom, setSelectedTaskId } = useTaskStore();
@@ -18,6 +18,27 @@ export function AreaSummaryCard() {
       alert("目前畫面上無此類型任務可定位");
     }
   };
+
+if (isCollapsed) {
+  return (
+    <button
+      onClick={() => setIsCollapsed(false)}
+      className="
+        absolute top-[132px] left-5 z-[1000]
+        w-10 h-10
+        rounded-2xl
+        backdrop-blur
+        bg-white/40 dark:bg-slate-800/60
+        border border-slate-200 dark:border-slate-800
+        shadow-lg
+        flex items-center justify-center
+        transition-all
+      "
+    >
+      <Megaphone className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+    </button>
+  );
+}
 
   return (
     <div className={`absolute top-[136px] left-4 right-20 md:left-5 md:right-auto z-[1000] pointer-events-auto md:w-full md:max-w-[340px] backdrop-blur rounded-xl shadow-l transition-all duration-300 overflow-hidden p-2`}>
