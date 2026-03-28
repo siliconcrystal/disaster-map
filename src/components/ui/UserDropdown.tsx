@@ -1,57 +1,75 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
+import { useTaskStore } from '@/store/useTaskStore';
+import { useUIStore } from '@/store/useUIStore';
+import type { DisasterType } from '@/types/disasterData';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  User, LogIn, LogOut, ChevronRight, ChevronLeft,
-  Check, AlertTriangle, Monitor, Sun, Moon
-} from "lucide-react";
-import { useUIStore } from "@/store/useUIStore";
-import { useTaskStore } from "@/store/useTaskStore";
-import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
+  AlertTriangle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  CloudLightning,
+  LogIn,
+  LogOut,
+  Monitor,
+  Moon,
+  Sun,
+  User,
+} from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useEffect, useRef, useState } from 'react';
 
 const ROLES = [
-  { name: "未設定角色", icon: "👤" }, // ✅ 新增預設
-  { name: "指揮所", icon: "🎖️" },
-  { name: "災民", icon: "🏡" },
-  { name: "救難隊", icon: "🆘" },
-  { name: "消防隊", icon: "🚒" },
-  { name: "醫療團隊", icon: "🚑" },
-  { name: "無人機隊伍", icon: "🛸" },
-  { name: "在地組織", icon: "🏘️" },
-  { name: "線上志工", icon: "💻" },
-  { name: "現場志工", icon: "🤝" }
+  { name: '未設定角色', icon: '👤' },
+  { name: '指揮所', icon: '🎖️' },
+  { name: '災民', icon: '🏡' },
+  { name: '救難隊', icon: '🆘' },
+  { name: '消防隊', icon: '🚒' },
+  { name: '醫療團隊', icon: '🚑' },
+  { name: '無人機隊伍', icon: '🛸' },
+  { name: '在地組織', icon: '🏘️' },
+  { name: '線上志工', icon: '💻' },
+  { name: '現場志工', icon: '🤝' },
+];
+
+const DISASTER_TYPES: { type: DisasterType; name: string; icon: string }[] = [
+  { type: 'earthquake', name: '地震', icon: '🌍' },
+  { type: 'fire', name: '火災', icon: '🔥' },
+  { type: 'storm', name: '風災', icon: '🌪️' },
+  { type: 'flood', name: '水災', icon: '🌊' },
+  { type: 'pandemic', name: '疫情', icon: '🦠' },
+  { type: 'war', name: '戰爭', icon: '⚔️' },
 ];
 
 export function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [view, setView] = useState<'main' | 'roles'>('main');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [view, setView] = useState<'main' | 'roles' | 'disasters'>('main');
 
   const {
     currentUserRole,
     setCurrentUserRole,
     setTaskCreateOpen,
     viewMode,
-    setViewMode
+    setViewMode,
+    currentDisasterType,
+    setCurrentDisasterType,
+    isLoggedIn,
+    setIsLoggedIn,
   } = useUIStore();
 
-  const { mapCenter } = useTaskStore();
+  const { mapCenter, generateDisasterData } = useTaskStore();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const currentTheme = theme === 'system' ? resolvedTheme : theme;
 
-  const avatarBg = isLoggedIn
-    ? "bg-[url('/Avatar.png')]"
-    : "bg-[url('/UnloginAvatar.png')]";
+  const avatarBg = isLoggedIn ? "bg-[url('/Avatar.png')]" : "bg-[url('/UnloginAvatar.png')]";
 
   // ✅ 沒選 or 預設 → 顯示「預設」
   const currentRoleName =
-    currentUserRole && currentUserRole !== ""
-      ? currentUserRole
-      : "未設定角色";
-  const isDefaultRole = currentRoleName === "未設定角色";
+    currentUserRole && currentUserRole !== '' ? currentUserRole : '未設定角色';
+  const isDefaultRole = currentRoleName === '未設定角色';
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -59,8 +77,8 @@ export function UserDropdown() {
         setIsOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -71,21 +89,30 @@ export function UserDropdown() {
 
   const handleRoleSelect = (role: string) => {
     // ✅ 選「預設」→ 清空
-    if (role === "未設定角色") {
-      setCurrentUserRole("");
+    if (role === '未設定角色') {
+      setCurrentUserRole('');
     } else {
       setCurrentUserRole(role);
     }
     setIsOpen(false);
   };
 
+  const handleDisasterSelect = (type: DisasterType) => {
+    setCurrentDisasterType(type);
+    // 同時更新災害資料，讓地圖圖層響應
+    generateDisasterData(type);
+    setIsOpen(false);
+  };
+
+  const currentDisasterInfo = DISASTER_TYPES.find((d) => d.type === currentDisasterType);
+
   const handleLoginToggle = () => {
-    setIsLoggedIn(prev => !prev);
+    setIsLoggedIn(!isLoggedIn);
     setIsOpen(false);
   };
 
   const handleReportTask = async () => {
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           setTaskCreateOpen(true, [pos.coords.latitude, pos.coords.longitude]);
@@ -94,7 +121,7 @@ export function UserDropdown() {
         () => {
           setTaskCreateOpen(true, mapCenter);
           setIsOpen(false);
-        }
+        },
       );
     } else {
       setTaskCreateOpen(true, mapCenter);
@@ -111,7 +138,7 @@ export function UserDropdown() {
           className={`w-14 h-14 rounded-full 
             ${avatarBg}
             bg-cover bg-center
-            border border-white border-4 dark:border-slate-700  
+            border-4 border-white dark:border-slate-700
             shadow-xl flex items-center justify-center
             hover:bg-blue-100/70 dark:hover:bg-slate-700 transition-colors`}
         />
@@ -124,16 +151,18 @@ export function UserDropdown() {
           min-w-[28px] h-5 px-1
           rounded-full
           bg-white dark:bg-slate-700
-          border border-white dark:border-slate-900
-          flex items-center justify-center
+          border border-slate-200 dark:border-slate-600
+          items-center justify-center
           text-[10px] font-medium
-        ${isDefaultRole 
-          ? "text-slate-400 dark:text-slate-400" 
-          : "text-slate-700 dark:text-slate-100"}
+        ${
+          isDefaultRole
+            ? 'text-slate-400 dark:text-slate-400'
+            : 'text-slate-700 dark:text-slate-100'
+        }
           shadow-md
           whitespace-nowrap
         `}
->
+        >
           {currentRoleName}
         </div>
       </div>
@@ -166,7 +195,25 @@ export function UserDropdown() {
                 >
                   <div className="flex items-center gap-3">
                     <User className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
-                    <span className="text-[15px] text-slate-700 dark:text-slate-300 font-medium">切換角色</span>
+                    <span className="text-[15px] text-slate-700 dark:text-slate-300 font-medium">
+                      切換角色
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 dark:text-slate-300 opacity-50" />
+                </button>
+
+                <button
+                  onClick={() => setView('disasters')}
+                  className="flex items-center justify-between w-full px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800"
+                >
+                  <div className="flex items-center gap-3">
+                    <CloudLightning className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
+                    <span className="text-[15px] text-slate-700 dark:text-slate-300 font-medium">
+                      切換災害類型
+                      <span className="ml-2 text-xs opacity-60">
+                        {currentDisasterInfo?.icon} {currentDisasterInfo?.name}
+                      </span>
+                    </span>
                   </div>
                   <ChevronRight className="w-4 h-4 dark:text-slate-300 opacity-50" />
                 </button>
@@ -178,7 +225,9 @@ export function UserDropdown() {
                   className="flex items-center gap-3 w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <AlertTriangle className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
-                  <span className="text-[15px] text-slate-700 dark:text-slate-300 font-medium">回報任務</span>
+                  <span className="text-[15px] text-slate-700 dark:text-slate-300 font-medium">
+                    回報任務
+                  </span>
                 </button>
 
                 <button
@@ -195,17 +244,23 @@ export function UserDropdown() {
                 </button>
 
                 <button
-                  onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
+                  onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
                   className="flex items-center justify-between w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <div className="flex items-center gap-3">
-                    {currentTheme === 'dark'
-                      ? <Moon className="w-5 h-5 opacity-60 text-slate-500 dark:text-slate-300" />
-                      : <Sun className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />}
-                    <span className="text-[15px] font-medium text-slate-700 dark:text-slate-300">深色主題</span>
+                    {currentTheme === 'dark' ? (
+                      <Moon className="w-5 h-5 opacity-60 text-slate-500 dark:text-slate-300" />
+                    ) : (
+                      <Sun className="w-5 h-5 opacity-80 text-slate-600 dark:text-slate-300" />
+                    )}
+                    <span className="text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                      深色主題
+                    </span>
                   </div>
                   <div className="w-10 h-6 flex items-center bg-slate-200 dark:bg-blue-500 rounded-full p-1">
-                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${currentTheme === 'dark' ? 'translate-x-4' : ''}`} />
+                    <div
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${currentTheme === 'dark' ? 'translate-x-4' : ''}`}
+                    />
                   </div>
                 </button>
 
@@ -217,9 +272,13 @@ export function UserDropdown() {
                     className="w-full py-2.5 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 border border-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2 text-[14px] font-bold"
                   >
                     {isLoggedIn ? (
-                      <><LogOut className="w-4 h-4" /> 登出</>
+                      <>
+                        <LogOut className="w-4 h-4" /> 登出
+                      </>
                     ) : (
-                      <><LogIn className="w-4 h-4" /> 登入</>
+                      <>
+                        <LogIn className="w-4 h-4" /> 登入
+                      </>
                     )}
                   </button>
 
@@ -231,7 +290,7 @@ export function UserDropdown() {
                   )}
                 </div>
               </motion.div>
-            ) : (
+            ) : view === 'roles' ? (
               <motion.div
                 key="roles"
                 initial={{ x: 20, opacity: 0 }}
@@ -241,10 +300,15 @@ export function UserDropdown() {
                 className="flex flex-col max-h-[400px]"
               >
                 <div className="flex items-center gap-2 p-3 border-b border-slate-100 dark:border-slate-800">
-                  <button onClick={() => setView('main')} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                  <button
+                    onClick={() => setView('main')}
+                    className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
                     <ChevronLeft className="w-5 h-5 text-slate-700 dark:text-slate-300" />
                   </button>
-                  <span className="text-sm font-bold text-slate-700 dark:text-slate-300">選擇您的角色</span>
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    選擇您的角色
+                  </span>
                 </div>
 
                 <div className="overflow-y-auto py-2">
@@ -256,10 +320,53 @@ export function UserDropdown() {
                     >
                       <div className="flex items-center gap-3">
                         {icon && <span className="text-lg">{icon}</span>}
-                        <span className="text-[15px] text-slate-700 dark:text-slate-300">{name}</span>
+                        <span className="text-[15px] text-slate-700 dark:text-slate-300">
+                          {name}
+                        </span>
                       </div>
                       {currentRoleName === name && (
-                        <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                        <Check className="w-4 h-4 text-blue-500" strokeWidth={3} />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="disasters"
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 20, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-col max-h-[400px]"
+              >
+                <div className="flex items-center gap-2 p-3 border-b border-slate-100 dark:border-slate-800">
+                  <button
+                    onClick={() => setView('main')}
+                    className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                  </button>
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    選擇災害類型
+                  </span>
+                </div>
+
+                <div className="overflow-y-auto py-2">
+                  {DISASTER_TYPES.map(({ type, name, icon }) => (
+                    <button
+                      key={type}
+                      onClick={() => handleDisasterSelect(type)}
+                      className="flex items-center justify-between w-full px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{icon}</span>
+                        <span className="text-[15px] text-slate-700 dark:text-slate-300">
+                          {name}
+                        </span>
+                      </div>
+                      {currentDisasterType === type && (
+                        <Check className="w-4 h-4 text-blue-500" strokeWidth={3} />
                       )}
                     </button>
                   ))}

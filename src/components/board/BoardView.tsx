@@ -27,11 +27,11 @@ const TaskCard = ({ task }: { task: Task }) => {
   return (
     <div
       onClick={() => setSelectedTaskId(task.id)}
-      className="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-l 
-      dark:shadow-none border border-slate-200 
+      className="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-lg
+      dark:shadow-none border border-slate-200
       dark:border-slate-700 cursor-pointer
-       hover:bg-slate-100/20 
-       dark:hover:bg-slate-100/20  transition-all group"
+       hover:bg-slate-50
+       dark:hover:bg-slate-700/50 transition-all group"
     >
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xl"> {TYPE_EMOJI[task.type] || '📍'}</span>
@@ -52,13 +52,13 @@ const TaskCard = ({ task }: { task: Task }) => {
 };
 
 export function BoardView() {
-  const { getFilteredTasks, searchQuery, filters } = useTaskStore();
+  const { tasks, getFilteredTasks, searchQuery, filters } = useTaskStore();
   const { currentUserRole } = useUIStore();
 
   const filteredTasks = useMemo(
     () => getFilteredTasks(currentUserRole),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchQuery, filters, currentUserRole]
+    [searchQuery, filters, currentUserRole, tasks]
   );
 
   const columns = [
