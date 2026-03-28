@@ -64,7 +64,7 @@ export function AreaSummaryCard() {
       </div>
 
       <div
-        className={`transition-all duration-300 ease-in-out origin-top ${isCollapsed ? 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none' : 'grid-rows-[1fr] opacity-100 mt-2 pointer-events-auto'} grid`}
+        className={`transition-all duration-500 ease-in-out origin-top ${isCollapsed ? 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none' : 'grid-rows-[1fr] opacity-100 mt-2 pointer-events-auto'} grid`}
       >
         <div className="overflow-hidden px-1 pb-1">
           <p className="text-[11px] text-slate-500 dark:text-slate-500 font-medium tracking-wide mb-3">

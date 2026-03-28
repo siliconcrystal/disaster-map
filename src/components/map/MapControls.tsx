@@ -57,7 +57,10 @@ export function MapControls() {
             map.flyTo(e.latlng, map.getZoom());
           });
         }}
-        className="w-11 h-11 flex items-center justify-center bg-white/95 backdrop-blur dark:bg-slate-900/95 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] border border-slate-100/50 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-200"
+        className="w-11 h-11 flex items-center justify-center bg-white/95 backdrop-blur 
+        dark:bg-slate-900/95 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] 
+        border border-slate-100/50 dark:border-slate-800 
+        hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-200"
       >
         <Crosshair className="w-5 h-5" strokeWidth={1.5} />
       </button>
