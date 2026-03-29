@@ -6,10 +6,15 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useTheme } from "next-themes";
 import { MarkerLayer } from "./MarkerLayer";
+import { StationMarkerLayer } from "./StationMarkerLayer";
 import { PolygonLayer } from "./PolygonLayer";
 import { MapControls } from "./MapControls";
+import { DisasterZoneLayer } from "./DisasterZoneLayer";
+import { MapTouchHandler } from "./MapTouchHandler";
+import { ResourceMarkerLayer } from "./ResourceMarkerLayer";
 import { ZoneDetailCard } from "../task/ZoneDetailCard";
-import { TaskDetailCard } from "../task/TaskDetailCard";
+import { StationDetailCard } from "../station/StationDetailCard";
+import { MapClickDetailCard } from "../task/MapClickDetailCard";
 
 
 
@@ -58,12 +63,22 @@ export default function MapView() {
         )}
         <MapControls />
 
-        <MarkerLayer />
+        {/* 災害區域圖層（底層） */}
+        <DisasterZoneLayer />
+        {/* 任務區域圖層 */}
         <PolygonLayer />
+        {/* 資源點位圖層 */}
+        <ResourceMarkerLayer />
+        {/* 任務 Marker 圖層 */}
+        <MarkerLayer />
+        {/* 站點 Marker 圖層 */}
+        <StationMarkerLayer />
+        <MapTouchHandler />
       </MapContainer>
 
       <ZoneDetailCard />
-      <TaskDetailCard />
+      <StationDetailCard />
+      <MapClickDetailCard />
     </div>
   );
 }

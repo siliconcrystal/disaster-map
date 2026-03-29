@@ -1,33 +1,35 @@
-"use client";
+'use client';
 
-import { useTaskStore } from "@/store/useTaskStore";
-import { useUIStore } from "@/store/useUIStore";
-import { useMemo } from "react";
-import { MapPin, X } from "lucide-react";
+import { useTaskStore } from '@/store/useTaskStore';
+import { useUIStore } from '@/store/useUIStore';
+import { MapPin, User, X } from 'lucide-react';
+import { useMemo } from 'react';
 
 const TYPE_EMOJI: Record<string, string> = {
-  fire: "🔥",
-  rescue: "🚨",
-  danger: "🚧",
-  people: "👥",
-  inspection: "⛑️",
-  medical: "🚑",
-  supply: "📦",
-  cleanup: "🪏",
-  heavy: "🚜",
-  utility: "🔧",
-  support: "💪",
-  transport: "🛵"
+  fire: '🔥',
+  rescue: '🚨',
+  danger: '🚧',
+  people: '👥',
+  inspection: '⛑️',
+  medical: '🚑',
+  supply: '📦',
+  cleanup: '🪏',
+  heavy: '🚜',
+  utility: '🔧',
+  support: '💪',
+  transport: '🛵',
 };
 
 export function TaskListPanel() {
   const {
+    tasks,
     searchQuery,
     filters,
     setSelectedTaskId,
     setSearchQuery,
     setFilters,
-    getFilteredTasks
+    getFilteredTasks,
+    isMyTask,
   } = useTaskStore();
 
   const { currentUserRole } = useUIStore();
@@ -35,16 +37,16 @@ export function TaskListPanel() {
   const filteredTasks = useMemo(
     () => getFilteredTasks(currentUserRole),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchQuery, filters, currentUserRole]
+    [searchQuery, filters, currentUserRole, tasks],
   );
 
   const hasActiveFilters =
     searchQuery ||
-    filters.type !== "all" ||
-    filters.urgency !== "all" ||
-    filters.status !== "all" ||
-    filters.timeRange !== "all" ||
-    filters.assignee !== "all";
+    filters.type !== 'all' ||
+    filters.urgency !== 'all' ||
+    filters.status !== 'all' ||
+    filters.timeRange !== 'all' ||
+    filters.assignee !== 'all';
 
   if (!hasActiveFilters && filteredTasks.length > 0) {
     return null;
@@ -85,13 +87,13 @@ export function TaskListPanel() {
           </h2>
           <button
             onClick={() => {
-              setSearchQuery("");
+              setSearchQuery('');
               setFilters({
-                type: "all",
-                urgency: "all",
-                status: "all",
-                timeRange: "all",
-                assignee: "all"
+                type: 'all',
+                urgency: 'all',
+                status: 'all',
+                timeRange: 'all',
+                assignee: 'all',
               });
             }}
             className="p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
@@ -103,23 +105,25 @@ export function TaskListPanel() {
         {/* List */}
         <div className="overflow-y-auto flex-1 p-2 space-y-2 no-scrollbar">
           {filteredTasks.length === 0 ? (
-            <p className="text-sm text-slate-500 p-4 text-center">
-              找不到符合的任務
-            </p>
+            <p className="text-sm text-slate-500 p-4 text-center">找不到符合的任務</p>
           ) : (
-            filteredTasks.map(task => (
+            filteredTasks.map((task) => (
               <button
                 key={task.id}
                 onClick={() => setSelectedTaskId(task.id)}
                 className="w-full text-left p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 group"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">
-                    {TYPE_EMOJI[task.type] || "📍"}
-                  </span>
-                  <h3 className="font-medium text-slate-800 dark:text-slate-200 line-clamp-1">
+                  <span className="text-xl">{TYPE_EMOJI[task.type] || '📍'}</span>
+                  <h3 className="font-medium text-slate-800 dark:text-slate-200 line-clamp-1 flex-1">
                     {task.title}
                   </h3>
+                  {isMyTask(task.id) && (
+                    <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full shrink-0">
+                      <User className="w-3 h-3" />
+                      我的任務
+                    </span>
+                  )}
                 </div>
 
                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-2">
@@ -128,9 +132,7 @@ export function TaskListPanel() {
 
                 <div className="flex items-center gap-1 text-[10px] text-slate-400">
                   <MapPin className="w-3 h-3" />
-                  <span>
-                    {task.address}
-                  </span>
+                  <span>{task.address}</span>
                 </div>
               </button>
             ))

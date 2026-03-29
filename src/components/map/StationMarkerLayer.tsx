@@ -3,22 +3,21 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useMap, Marker } from "react-leaflet";
 import useSupercluster from "use-supercluster";
-import { useTaskStore } from "@/store/useTaskStore";
 import { useStationStore } from "@/store/useStationStore";
+import { useTaskStore } from "@/store/useTaskStore";
 import { useUIStore } from "@/store/useUIStore";
 import L from "leaflet";
 
 const TYPE_EMOJI: Record<string, string> = {
-  fire: "🔥", rescue: "🚨", danger: "🚧", people: "👥",
-  inspection: "⛑️", medical: "🚑", supply: "📦", cleanup: "🪏",
-  heavy: "🚜", utility: "🔧", support: "💪", transport: "🛵"
+  shower: "🚿", restroom: "🚻", medical: "🏥", supply: "📦",
+  shelter: "🏠", accommodation: "🏨", water: "💧", repair: "🔧"
 };
 
-export function MarkerLayer() {
+export function StationMarkerLayer() {
   const map = useMap();
-  const { tasks, setSelectedTaskId, selectedTaskId, getFilteredTasks, searchQuery, filters } = useTaskStore();
-  const { setSelectedStationId } = useStationStore();
-  const { currentUserRole, setSelectedMapLocation } = useUIStore();
+  const { stations, selectedStationId, setSelectedStationId, getFilteredStations, stationFilters } = useStationStore();
+  const { setSelectedTaskId } = useTaskStore();
+  const { activeMapLayers } = useUIStore();
 
   const [bounds, setBounds] = useState<[number, number, number, number] | undefined>(undefined);
   const [zoom, setZoom] = useState(13);
@@ -26,10 +25,8 @@ export function MarkerLayer() {
   const updateMapState = useCallback(() => {
     const b = map.getBounds();
     setBounds([
-      b.getSouthWest().lng,
-      b.getSouthWest().lat,
-      b.getNorthEast().lng,
-      b.getNorthEast().lat
+      b.getSouthWest().lng, b.getSouthWest().lat,
+      b.getNorthEast().lng, b.getNorthEast().lat
     ]);
     setZoom(map.getZoom());
   }, [map]);
@@ -41,19 +38,19 @@ export function MarkerLayer() {
     return () => { map.off("moveend", updateMapState); };
   }, [map, updateMapState]);
 
-  const filteredTasks = useMemo(
-    () => getFilteredTasks(currentUserRole),
+  const filteredStations = useMemo(
+    () => getFilteredStations(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchQuery, filters, currentUserRole, tasks]
+    [stations, stationFilters]
   );
 
   const points = useMemo(() => {
-    return filteredTasks.map(task => ({
+    return filteredStations.map(station => ({
       type: "Feature" as const,
-      properties: { cluster: false, taskId: task.id, type: task.type },
-      geometry: { type: "Point" as const, coordinates: [task.lng, task.lat] }
+      properties: { cluster: false, stationId: station.id, type: station.type },
+      geometry: { type: "Point" as const, coordinates: [station.lng, station.lat] }
     }));
-  }, [filteredTasks]);
+  }, [filteredStations]);
 
   const { clusters, supercluster } = useSupercluster({
     points,
@@ -65,25 +62,25 @@ export function MarkerLayer() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const createClusterIcon = (cluster: any) => {
     const count = cluster.properties.point_count;
-    let size = "w-10 h-10 text-sm";
-    if (count > 10) size = "w-12 h-12 text-base";
-    if (count > 50) size = "w-14 h-14 text-lg";
+    let size = "w-9 h-9 text-xs";
+    if (count > 10) size = "w-11 h-11 text-sm";
+    if (count > 50) size = "w-13 h-13 text-base";
 
-    const html = `<div class="flex items-center justify-center ${size} rounded-full bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold border-[1px] border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-md transition-transform hover:scale-105">
+    const html = `<div class="flex items-center justify-center ${size} rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-200 font-bold border border-amber-200 dark:border-amber-800 shadow-lg backdrop-blur-md transition-transform hover:scale-105">
       ${count}
     </div>`;
 
-    return L.divIcon({ html, className: "custom-cluster-icon bg-transparent border-0", iconSize: L.point(40, 40), iconAnchor: [20, 20] });
+    return L.divIcon({ html, className: "custom-cluster-icon bg-transparent border-0", iconSize: L.point(36, 36), iconAnchor: [18, 18] });
   };
 
-  const createCustomIcon = (type: string, isSelected: boolean) => {
+  const createStationIcon = (type: string, isSelected: boolean) => {
     const emoji = TYPE_EMOJI[type] || "📍";
 
     if (isSelected) {
-      const size = 56;
+      const size = 48;
       const html = `
         <div class="selected-pin-ring" style="width:${size}px;height:${size}px;">
-          <div class="flex items-center justify-center w-full h-full rounded-full bg-white dark:bg-slate-800 text-2xl shadow-2xl z-10">
+          <div class="flex items-center justify-center w-full h-full rounded-xl bg-amber-50 dark:bg-amber-900 text-2xl shadow-2xl border-2 border-amber-400 dark:border-amber-500 z-10">
             ${emoji}
           </div>
         </div>`;
@@ -95,8 +92,8 @@ export function MarkerLayer() {
       });
     }
 
-    const size = 40;
-    const html = `<div class="flex items-center justify-center w-full h-full rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 text-xl transition-all duration-300">
+    const size = 36;
+    const html = `<div class="flex items-center justify-center w-full h-full rounded-xl bg-amber-50 dark:bg-amber-900 shadow-lg border border-amber-200 dark:border-amber-700 text-lg transition-all duration-300">
       ${emoji}
     </div>`;
     return L.divIcon({
@@ -108,24 +105,27 @@ export function MarkerLayer() {
   };
 
   useEffect(() => {
-    if (selectedTaskId) {
-      const task = tasks.find(t => t.id === selectedTaskId);
-      if (task) {
-        map.setView([task.lat, task.lng], map.getZoom(), { animate: true });
+    if (selectedStationId) {
+      const station = stations.find(s => s.id === selectedStationId);
+      if (station) {
+        map.setView([station.lat, station.lng], map.getZoom(), { animate: true });
       }
     }
-  }, [selectedTaskId, tasks, map]);
+  }, [selectedStationId, stations, map]);
+
+  // Don't render if station layer is off
+  if (!activeMapLayers.station) return null;
 
   return (
     <>
       {clusters.map((cluster) => {
         const [longitude, latitude] = cluster.geometry.coordinates;
-        const { cluster: isCluster, taskId, type } = cluster.properties;
+        const { cluster: isCluster, stationId, type } = cluster.properties;
 
         if (isCluster) {
           return (
             <Marker
-              key={`cluster-${cluster.id}`}
+              key={`station-cluster-${cluster.id}`}
               position={[latitude, longitude]}
               icon={createClusterIcon(cluster)}
               eventHandlers={{
@@ -140,15 +140,14 @@ export function MarkerLayer() {
 
         return (
           <Marker
-            key={`task-${taskId}`}
+            key={`station-${stationId}`}
             position={[latitude, longitude]}
-            icon={createCustomIcon(type, selectedTaskId === taskId)}
-            zIndexOffset={selectedTaskId === taskId ? 1000 : 0}
+            icon={createStationIcon(type, selectedStationId === stationId)}
+            zIndexOffset={selectedStationId === stationId ? 900 : -100}
             eventHandlers={{
               click: () => {
-                setSelectedMapLocation(null);
-                setSelectedTaskId(taskId);
-                setSelectedStationId(null); // mutual exclusion
+                setSelectedStationId(stationId);
+                setSelectedTaskId(null); // mutual exclusion
               }
             }}
           />
