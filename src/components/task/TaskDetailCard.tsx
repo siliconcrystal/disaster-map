@@ -18,7 +18,11 @@ import {
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-const URGENCY_ZH: Record<string, { label: string; className: string }> = {
+const PRIORITY_ZH: Record<string, { label: string; className: string }> = {
+  critical: {
+    label: '危急',
+    className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+  },
   high: {
     label: '緊急',
     className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
@@ -34,37 +38,42 @@ const URGENCY_ZH: Record<string, { label: string; className: string }> = {
 };
 
 const STATUS_ZH: Record<string, { label: string; className: string }> = {
-  reported: {
-    label: '已回報',
+  pending: {
+    label: '待處理',
     className: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
-  },
-  recruiting: {
-    label: '招募中',
-    className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
   },
   in_progress: {
     label: '進行中',
     className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
   },
-  done: {
+  completed: {
     label: '已完成',
     className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
+  },
+  canceled: {
+    label: '已取消',
+    className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
+  },
+  archived: {
+    label: '已歸檔',
+    className: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
   },
 };
 
 const TYPE_ZH: Record<string, string> = {
-  fire: '🔥 火災',
-  rescue: '🚨 搜救',
-  danger: '🚧 危險區域',
-  people: '👥 人員統計',
-  inspection: '⛑️ 建築檢查',
-  medical: '🚑 醫療',
-  supply: '📦 物資',
-  cleanup: '🪏 清理淤泥',
-  heavy: '🚜 重型機具',
-  utility: '🔧 水電',
-  support: '💪 人力支援',
-  transport: '🛵 協助運送',
+  search_rescue: '🚨 搜救',
+  medical_support: '🚑 醫療支援',
+  fire_response: '🔥 火災應變',
+  supply_delivery: '📦 物資運送',
+  personnel_transport: '🛵 人員運送',
+  equipment_transport: '🚜 設備運送',
+  cleanup: '🪏 清理',
+  repair: '🔧 修繕',
+  inspection: '⛑️ 巡檢',
+  info_report: '📋 資訊回報',
+  info_update: '🔄 資訊更新',
+  info_verification: '✅ 資訊驗證',
+  other: '📍 其他',
 };
 
 export function TaskDetailCard() {
@@ -78,7 +87,7 @@ export function TaskDetailCard() {
 
   if (!task) return null;
 
-  const urgency = URGENCY_ZH[task.urgency] || { label: task.urgency, className: '' };
+  const priorityInfo = PRIORITY_ZH[task.priority] || { label: task.priority, className: '' };
   const status = STATUS_ZH[task.status] || { label: task.status, className: '' };
 
   const handleCopy = () => {
@@ -113,7 +122,7 @@ export function TaskDetailCard() {
   // 處理完成任務
   const handleCompleteTask = () => {
     if (!isLoggedIn || !task) return;
-    updateTask(task.id, { status: 'done' });
+    updateTask(task.id, { status: 'completed' });
   };
 
   // 渲染行動按鈕
@@ -134,7 +143,7 @@ export function TaskDetailCard() {
     }
 
     // 已完成：顯示已完成狀態
-    if (task.status === 'done') {
+    if (task.status === 'completed') {
       return (
         <div className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 font-medium">
           <CheckCircle2 className="w-4 h-4" />
@@ -157,8 +166,8 @@ export function TaskDetailCard() {
           </button>
         );
       }
-      // 招募中但已加入：可以開始
-      if (task.status === 'recruiting') {
+      // 待處理但已加入：可以開始
+      if (task.status === 'pending') {
         return (
           <button
             onClick={handleStartTask}
@@ -172,8 +181,8 @@ export function TaskDetailCard() {
     }
 
     // 不是我的任務
-    // 招募中：可以加入
-    if (task.status === 'recruiting') {
+    // 待處理：可以加入
+    if (task.status === 'pending') {
       return (
         <button
           onClick={handleJoinTask}
@@ -191,15 +200,6 @@ export function TaskDetailCard() {
         <div className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium">
           <Play className="w-4 h-4" />
           任務進行中
-        </div>
-      );
-    }
-
-    // 已回報：等待審核
-    if (task.status === 'reported') {
-      return (
-        <div className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
-          等待審核中
         </div>
       );
     }
@@ -253,8 +253,8 @@ export function TaskDetailCard() {
         <div className="p-5 flex-1 overflow-y-auto space-y-5">
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${urgency.className}`}>
-              {urgency.label}
+            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${priorityInfo.className}`}>
+              {priorityInfo.label}
             </span>
             <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${status.className}`}>
               {status.label}

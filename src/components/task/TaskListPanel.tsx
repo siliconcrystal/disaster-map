@@ -6,18 +6,19 @@ import { MapPin, User, X } from 'lucide-react';
 import { useMemo } from 'react';
 
 const TYPE_EMOJI: Record<string, string> = {
-  fire: '🔥',
-  rescue: '🚨',
-  danger: '🚧',
-  people: '👥',
-  inspection: '⛑️',
-  medical: '🚑',
-  supply: '📦',
+  search_rescue: '🚨',
+  medical_support: '🚑',
+  fire_response: '🔥',
+  supply_delivery: '📦',
+  personnel_transport: '🛵',
+  equipment_transport: '🚜',
   cleanup: '🪏',
-  heavy: '🚜',
-  utility: '🔧',
-  support: '💪',
-  transport: '🛵',
+  repair: '🔧',
+  inspection: '⛑️',
+  info_report: '📋',
+  info_update: '🔄',
+  info_verification: '✅',
+  other: '📍',
 };
 
 export function TaskListPanel() {
@@ -43,7 +44,7 @@ export function TaskListPanel() {
   const hasActiveFilters =
     searchQuery ||
     filters.type !== 'all' ||
-    filters.urgency !== 'all' ||
+    filters.priority !== 'all' ||
     filters.status !== 'all' ||
     filters.timeRange !== 'all' ||
     filters.assignee !== 'all';
@@ -90,7 +91,7 @@ export function TaskListPanel() {
               setSearchQuery('');
               setFilters({
                 type: 'all',
-                urgency: 'all',
+                priority: 'all',
                 status: 'all',
                 timeRange: 'all',
                 assignee: 'all',

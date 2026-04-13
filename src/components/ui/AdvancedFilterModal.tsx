@@ -3,15 +3,16 @@
 import { getTaskTypeFilterOptions } from '@/config/disasterTaskTypes';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUIStore } from '@/store/useUIStore';
-import { Status, TimeRange, Urgency } from '@/types/task';
+import { Status, TimeRange, Priority } from '@/types/task';
 import { X } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { CalendarRangePicker } from './CalendarRangePicker';
 
 // TYPE_OPTIONS 改為動態根據災害類型取得，見 AdvancedFilterModal 組件內
 
-const URGENCY_OPTIONS: { label: string; value: Urgency | 'all' }[] = [
+const PRIORITY_OPTIONS: { label: string; value: Priority | 'all' }[] = [
   { label: '全部', value: 'all' },
+  { label: '危急', value: 'critical' },
   { label: '緊急', value: 'high' },
   { label: '中等', value: 'medium' },
   { label: '一般', value: 'low' },
@@ -19,10 +20,9 @@ const URGENCY_OPTIONS: { label: string; value: Urgency | 'all' }[] = [
 
 const STATUS_OPTIONS: { label: string; value: Status | 'all' }[] = [
   { label: '全部', value: 'all' },
-  { label: '已回報', value: 'reported' },
-  { label: '招募中', value: 'recruiting' },
+  { label: '待處理', value: 'pending' },
   { label: '進行中', value: 'in_progress' },
-  { label: '已完成', value: 'done' },
+  { label: '已完成', value: 'completed' },
 ];
 
 const TIME_RANGE_OPTIONS: { label: string; value: TimeRange }[] = [
@@ -48,7 +48,7 @@ const FilterGroup = ({
 }: {
   title: string;
   options: { label: string; value: string }[];
-  filterKey: 'type' | 'urgency' | 'status' | 'timeRange' | 'assignee';
+  filterKey: 'type' | 'priority' | 'status' | 'timeRange' | 'assignee';
   requiresAuthValues?: string[];
 }) => {
   const { filters, setFilters } = useTaskStore();
@@ -136,7 +136,7 @@ export function AdvancedFilterModal() {
             requiresAuthValues={['assigned']}
           />
           <FilterGroup title="類型" options={typeOptions} filterKey="type" />
-          <FilterGroup title="緊急程度" options={URGENCY_OPTIONS} filterKey="urgency" />
+          <FilterGroup title="緊急程度" options={PRIORITY_OPTIONS} filterKey="priority" />
           <FilterGroup title="狀態" options={STATUS_OPTIONS} filterKey="status" />
           <FilterGroup title="時間" options={TIME_RANGE_OPTIONS} filterKey="timeRange" />
         </div>
@@ -147,7 +147,7 @@ export function AdvancedFilterModal() {
               setFilters({
                 assignee: 'all',
                 type: 'all',
-                urgency: 'all',
+                priority: 'all',
                 status: 'all',
                 timeRange: 'all',
               })

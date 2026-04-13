@@ -7,18 +7,19 @@ import { Task } from "@/types/task";
 import { MapPin } from "lucide-react";
 
 const TYPE_EMOJI: Record<string, string> = {
-  fire: "🔥",
-  rescue: "🚨",
-  danger: "🚧",
-  people: "👥",
-  inspection: "⛑️",
-  medical: "🚑",
-  supply: "📦",
+  search_rescue: "🚨",
+  medical_support: "🚑",
+  fire_response: "🔥",
+  supply_delivery: "📦",
+  personnel_transport: "🛵",
+  equipment_transport: "🚜",
   cleanup: "🪏",
-  heavy: "🚜",
-  utility: "🔧",
-  support: "💪",
-  transport: "🛵"
+  repair: "🔧",
+  inspection: "⛑️",
+  info_report: "📋",
+  info_update: "🔄",
+  info_verification: "✅",
+  other: "📍",
 };
 
 
@@ -43,8 +44,8 @@ const TaskCard = ({ task }: { task: Task }) => {
           <MapPin className="w-3.5 h-3.5" />
           {task.address}
         </div>
-        <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${task.urgency === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : task.urgency === 'medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
-          {task.urgency === 'high' ? '緊急' : task.urgency === 'medium' ? '中等' : '一般'}
+        <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${task.priority === 'critical' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : task.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : task.priority === 'medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
+          {task.priority === 'critical' ? '危急' : task.priority === 'high' ? '緊急' : task.priority === 'medium' ? '中等' : '一般'}
         </div>
       </div>
     </div>
@@ -62,10 +63,9 @@ export function BoardView() {
   );
 
   const columns = [
-    { id: 'reported', label: '已回報' },
-    { id: 'recruiting', label: '招募中' },
+    { id: 'pending', label: '待處理' },
     { id: 'in_progress', label: '進行中' },
-    { id: 'done', label: '已完成' },
+    { id: 'completed', label: '已完成' },
   ];
 
   return (

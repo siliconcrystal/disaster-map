@@ -27,64 +27,29 @@ import { TaskFeedback } from './TaskFeedback';
 import { TaskTimeline } from './TaskTimeline';
 
 const TYPE_EMOJI: Record<string, string> = {
-  fire: '🔥',
-  rescue: '🚨',
-  danger: '🚧',
-  people: '👥',
-  inspection: '⛑️',
-  medical: '🚑',
-  supply: '📦',
-  cleanup: '🪏',
-  heavy: '🚜',
-  utility: '🔧',
-  support: '💪',
-  transport: '🛵',
+  search_rescue: '🚨', medical_support: '🚑', fire_response: '🔥',
+  supply_delivery: '📦', personnel_transport: '🛵', equipment_transport: '🚜',
+  cleanup: '🪏', repair: '🔧', inspection: '⛑️',
+  info_report: '📋', info_update: '🔄', info_verification: '✅', other: '📍',
 };
 const TYPE_ZH: Record<string, string> = {
-  fire: '火災',
-  rescue: '搜救',
-  danger: '危險區域',
-  people: '人員統計',
-  inspection: '建築檢查',
-  medical: '醫療',
-  supply: '物資',
-  cleanup: '清理淤泥',
-  heavy: '重型機具',
-  utility: '水電',
-  support: '人力支援',
-  transport: '協助運送',
+  search_rescue: '搜救', medical_support: '醫療支援', fire_response: '火災應變',
+  supply_delivery: '物資運送', personnel_transport: '人員運送', equipment_transport: '設備運送',
+  cleanup: '清理', repair: '修繕', inspection: '巡檢',
+  info_report: '資訊回報', info_update: '資訊更新', info_verification: '資訊驗證', other: '其他',
 };
-const URGENCY_ZH: Record<string, { label: string; className: string }> = {
-  high: {
-    label: '緊急',
-    className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-  },
-  medium: {
-    label: '中等',
-    className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
-  },
-  low: {
-    label: '一般',
-    className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-  },
+const PRIORITY_ZH: Record<string, { label: string; className: string }> = {
+  critical: { label: '危急', className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
+  high: { label: '緊急', className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
+  medium: { label: '中等', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' },
+  low: { label: '一般', className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
 };
 const STATUS_ZH: Record<string, { label: string; className: string }> = {
-  reported: {
-    label: '已回報',
-    className: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
-  },
-  recruiting: {
-    label: '招募中',
-    className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
-  },
-  in_progress: {
-    label: '進行中',
-    className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-  },
-  done: {
-    label: '已完成',
-    className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-  },
+  pending: { label: '待處理', className: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' },
+  in_progress: { label: '進行中', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+  completed: { label: '已完成', className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+  canceled: { label: '已取消', className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
+  archived: { label: '已歸檔', className: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' },
 };
 
 export function TaskFullDetailModal() {
@@ -99,7 +64,7 @@ export function TaskFullDetailModal() {
 
   if (!isTaskFullDetailOpen || !task) return null;
 
-  const urgency = URGENCY_ZH[task.urgency];
+  const priorityInfo = PRIORITY_ZH[task.priority];
   const status = STATUS_ZH[task.status];
 
   // 處理加入任務
@@ -117,7 +82,7 @@ export function TaskFullDetailModal() {
   // 處理完成任務
   const handleCompleteTask = () => {
     if (!isLoggedIn || !task) return;
-    updateTask(task.id, { status: 'done' });
+    updateTask(task.id, { status: 'completed' });
   };
 
   // 渲染行動按鈕
@@ -138,7 +103,7 @@ export function TaskFullDetailModal() {
     }
 
     // 已完成
-    if (task.status === 'done') {
+    if (task.status === 'completed') {
       return (
         <div className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 font-medium">
           <CheckCircle2 className="w-4 h-4" />
@@ -160,7 +125,7 @@ export function TaskFullDetailModal() {
           </button>
         );
       }
-      if (task.status === 'recruiting') {
+      if (task.status === 'pending') {
         return (
           <button
             onClick={handleStartTask}
@@ -173,8 +138,8 @@ export function TaskFullDetailModal() {
       }
     }
 
-    // 招募中：可以加入
-    if (task.status === 'recruiting') {
+    // 待處理：可以加入
+    if (task.status === 'pending') {
       return (
         <button
           onClick={handleJoinTask}
@@ -192,15 +157,6 @@ export function TaskFullDetailModal() {
         <div className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium">
           <Play className="w-4 h-4" />
           任務進行中
-        </div>
-      );
-    }
-
-    // 已回報
-    if (task.status === 'reported') {
-      return (
-        <div className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
-          等待審核中
         </div>
       );
     }
@@ -254,9 +210,9 @@ export function TaskFullDetailModal() {
           <div className="max-w-3xl mx-auto px-6 py-8 space-y-8 pb-32">
             {/* 1. Tags section — first in body */}
             <section className="flex flex-wrap gap-2">
-              {urgency && (
-                <span className={`px-3 py-1 rounded-full text-sm font-bold ${urgency.className}`}>
-                  {urgency.label}
+              {priorityInfo && (
+                <span className={`px-3 py-1 rounded-full text-sm font-bold ${priorityInfo.className}`}>
+                  {priorityInfo.label}
                 </span>
               )}
               {status && (
@@ -278,11 +234,11 @@ export function TaskFullDetailModal() {
             </section>
 
             {/* 3. Photo Gallery */}
-            {task.photos && task.photos.length > 0 && (
+            {task.photoUrls && task.photoUrls.length > 0 && (
               <section className="space-y-3">
                 <h3 className="font-bold text-slate-900 dark:text-white">現場照片</h3>
                 <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-                  {task.photos.map((url, idx) => (
+                  {task.photoUrls.map((url: string, idx: number) => (
                     <button
                       key={idx}
                       onClick={() => setLightboxPhoto(url)}
