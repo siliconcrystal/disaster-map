@@ -459,17 +459,21 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         }
       }
 
-      // Assignee filter
-      if (filters.assignee === 'my_role') {
-        // Show tasks matching user's role per spreadsheet 欄位overview tab mapping.
-        // `null` from getVisibleTaskTypes means "don't filter" (default/unknown role).
-        const visibleTypes = getVisibleTaskTypes(role);
-        if (visibleTypes && !visibleTypes.includes(t.type)) return false;
-      } else if (filters.assignee === 'assigned') {
+      // Role-based visibility — always applies when a role is set, per
+      // spreadsheet 欄位overview tab mapping. Switching role in the dropdown
+      // filters the map/board immediately; user does NOT need to click a chip.
+      // `null` from getVisibleTaskTypes means default/unknown role → no filter.
+      const visibleTypes = getVisibleTaskTypes(role);
+      if (visibleTypes && !visibleTypes.includes(t.type)) return false;
+
+      // Assignee filter (orthogonal to role filter)
+      if (filters.assignee === 'assigned') {
         // Show only tasks that user has joined
         const { myTaskIds } = get();
         if (!myTaskIds.has(t.id)) return false;
       }
+      // Note: 'my_role' chip is now a no-op (role filter already applied above).
+      // Left in the UI for backward compatibility; will be removed later.
 
       return true;
     });
