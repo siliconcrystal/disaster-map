@@ -3,6 +3,7 @@ import type { DisasterDataSource, DisasterType } from '../types/disasterData';
 import { Task, TaskType, Priority, Status, TimeRange, MapZone } from '../types/task';
 import { seedTasks } from '../data/seedTasks';
 import { seedZones } from '../data/seedZones';
+import { getVisibleTaskTypes } from '../config/roleTaskMapping';
 
 // ─── mock helper (used by generateDisasterData & generateMockTask) ──────────
 function rnd(min: number, max: number) {
@@ -460,12 +461,10 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
       // Assignee filter
       if (filters.assignee === 'my_role') {
-        // Show tasks matching user's role type — only filter if role has a mapped type
-        // Keys are Chinese role names from UserDropdown ROLES
-        const roleTypeMap: Record<string, string> = {
-          '消防隊': 'fire_response', '救難隊': 'search_rescue', '醫療團隊': 'medical_support',
-        };
-        if (role && roleTypeMap[role] && t.type !== roleTypeMap[role]) return false;
+        // Show tasks matching user's role per spreadsheet 欄位overview tab mapping.
+        // `null` from getVisibleTaskTypes means "don't filter" (default/unknown role).
+        const visibleTypes = getVisibleTaskTypes(role);
+        if (visibleTypes && !visibleTypes.includes(t.type)) return false;
       } else if (filters.assignee === 'assigned') {
         // Show only tasks that user has joined
         const { myTaskIds } = get();
