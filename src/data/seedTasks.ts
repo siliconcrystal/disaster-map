@@ -1,4 +1,5 @@
 import type { Task } from '../types/task';
+import { seedTasksEarthquake } from './seedTasksEarthquake';
 
 /**
  * Seed data: tasks from Guangfu earthquake disaster relief (v2).
@@ -6,6 +7,7 @@ import type { Task } from '../types/task';
  * Sources:
  * - 358 tasks from anonymized human_resources table
  * - 28 AI-generated emergency tasks (fire_response, inspection, search_rescue)
+ * - 200 generator-produced earthquake tasks (see seedTasksEarthquake.ts)
  *
  * Schema: matches spreadsheet 任務卡 tab
  * Disaster type: earthquake (first demo per Carol)
@@ -15,7 +17,7 @@ import type { Task } from '../types/task';
  * - Phones: 0987-654-{abc} pattern
  * - Addresses: real Guangfu locations with fuzzed house numbers
  */
-export const seedTasks: Task[] = [
+const seedTasksGuangfuHistorical: Task[] = [
   {
     id: 'hr-0199b273-56c2-787d-9611-9be41f03d7b9',
     title: '中正路一段154號 - 抽水機 (需2個)',
@@ -12783,4 +12785,9 @@ export const seedTasks: Task[] = [
     peopleCount: 30,
     hazardNote: '河川暴漲',
   }
+];
+
+export const seedTasks: Task[] = [
+  ...seedTasksGuangfuHistorical,
+  ...seedTasksEarthquake,
 ];
