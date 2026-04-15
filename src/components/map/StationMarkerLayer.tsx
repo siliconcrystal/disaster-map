@@ -9,8 +9,10 @@ import { useUIStore } from "@/store/useUIStore";
 import L from "leaflet";
 
 const TYPE_EMOJI: Record<string, string> = {
-  shower: "🚿", restroom: "🚻", medical: "🏥", supply: "📦",
-  shelter: "🏠", accommodation: "🏨", water: "💧", repair: "🔧"
+  water: "💧", shelter: "🏠", shower: "🚿", toilet: "🚻",
+  supply: "📦", gas_station: "⛽", medical: "🏥", transport: "🚌",
+  charge_spot: "🔌", power_station: "⚡", cellular_point: "📶",
+  accommodation: "🏨", reception_center: "🏘️",
 };
 
 export function StationMarkerLayer() {

@@ -1,100 +1,131 @@
 import type { DisasterDataSource, DisasterType } from './disasterData';
 
 // ─────────────────────────────────────────────
-// TaskType：对应地图上的任务点类型
-// 依灾害大类归拢如下：
-//   earthquake / fire → fire, rescue, danger, inspection, heavy, utility
-//   storm_flood       → cleanup, heavy, rescue, utility, transport
-//   pandemic          → medical, people, supply, support
-//   war               → danger, supply, support, transport
+// TaskType: matches spreadsheet 任務卡 schema
 // ─────────────────────────────────────────────
 export type TaskType =
-  | 'fire' // 🔥 火災
-  | 'rescue' // 🚨 搜救
-  | 'danger' // 🚧 危險區
-  | 'people' // 👥 人員統計
-  | 'inspection' // ⛑️ 建築檢查
-  | 'medical' // 🚑 醫療
-  | 'supply' // 📦 物資
-  | 'cleanup' // 🪏 清理淤泥
-  | 'heavy' // 🚜 重型機具
-  | 'utility' // 🔧 水電
-  | 'support' // 💪 人力支援
-  | 'transport'; // 🛵 協助運送
+  | 'search_rescue'        // 搜救
+  | 'medical_support'      // 醫療支援
+  | 'fire_response'        // 火災應變
+  | 'supply_delivery'      // 物資運送
+  | 'personnel_transport'  // 人員運送
+  | 'equipment_transport'  // 設備運送
+  | 'cleanup'              // 清理
+  | 'repair'               // 修繕
+  | 'inspection'           // 巡檢
+  | 'info_report'          // 資訊回報
+  | 'info_update'          // 資訊更新
+  | 'info_verification'    // 資訊驗證
+  | 'other'                // 其他
 
-export type Urgency = 'low' | 'medium' | 'high';
+export type Priority = 'low' | 'medium' | 'high' | 'critical';
 
-export type Status = 'reported' | 'recruiting' | 'in_progress' | 'done';
+export type Status = 'pending' | 'in_progress' | 'completed' | 'canceled' | 'archived';
 
 export type TimeRange = 'all' | '1h' | '12h' | '24h' | '72h' | 'custom';
 
+export type VerificationStatus = 'unverified' | 'ai_verified' | 'human_verified' | 'disputed';
+
+export type ModerationStatus = 'pending_review' | 'approved' | 'rejected' | 'merged';
+
 // ─────────────────────────────────────────────
-// Task：地图上每一个任务点的完整数据结构
+// Task: spreadsheet 任務卡 schema
 // ─────────────────────────────────────────────
 export type Task = {
-  // ── 基本资讯
-  id: string;
-  title: string;
-  description: string;
-  lat: number;
-  lng: number;
-  address?: string;
+  // ── Core identity ──
+  id: string
+  title: string
+  description: string
 
-  // ── 任务分类
-  type: TaskType;
+  // ── Location ──
+  lat: number
+  lng: number
+  address?: string
+  poleId?: string
 
-  /**
-   * 所属灾害类别，决定：
-   *   1. 显示哪些 disasterData 栏位
-   *   2. 权限层 getVisibleFields(role, disasterCategory) 的查询 key
-   */
-  disasterCategory?: DisasterType;
+  // ── Classification ──
+  type: TaskType
+  disasterType: DisasterType
+  disasterCategory?: DisasterType
 
-  urgency: Urgency;
-  status: Status;
+  // ── Status ──
+  priority: Priority
+  status: Status
+  source: 'user' | 'gov' | 'crawler' | 'ngo' | 'admin'
+  visibility: 'public' | 'restricted' | 'internal'
 
-  // ── 时间
-  createdAt: number;
-  updatedAt?: number;
+  // ── Time ──
+  createdAt: number
+  updatedAt?: number
 
-  // ── 人员
-  createdBy?: string;
-  assignedTo?: string[];
-  reporterName?: string;
-  reporterUnit?: string;
-  contact?: string;
+  // ── People ──
+  createdBy?: string
+  updatedBy?: string
+  assignedActorIds?: string[]
+  reporterName?: string
+  reporterUnit?: string
+  contact?: string
 
-  // ── 媒体
-  photos?: string[];
+  // ── Headcount ──
+  requiredHeadcount?: number
+  assignedHeadcount?: number
+  requiredSkills?: string[]
+  requiredResources?: string[]
 
-  // ── 任务执行纪录
+  // ── Media ──
+  photoUrls?: string[]
+
+  // ── Verification & trust ──
+  confidenceScore: number
+  verificationStatus: VerificationStatus
+  isDuplicate: boolean
+  dedupGroupId?: string
+  moderationStatus: ModerationStatus
+  reviewNote?: string
+  progressNote?: string
+
+  // ── Task execution ──
   history?: {
-    timestamp: number;
-    message: string;
-    type?: 'status' | 'comment' | 'system';
-  }[];
+    timestamp: number
+    message: string
+    type?: 'status' | 'comment' | 'system'
+  }[]
 
   feedback?: {
-    helpful: number;
-    toConfirm: number;
-  };
+    helpful: number
+    toConfirm: number
+  }
 
-  // ── 灾害相关数据（依 disasterCategory 动态筛选可见栏位）
-  //    所有字段定义见 src/types/disasterData.ts
-  //    实际权限控制见 src/config/roleDataSource.ts → getVisibleFields()
-  disasterData?: Partial<DisasterDataSource>;
-};
+  // ── Disaster-specific (earthquake/fire/landslide) ──
+  peopleCount?: number
+  floorLevel?: string
+  unitNumber?: string
+  hazardNote?: string
+
+  // ── Transport-specific ──
+  destination?: string
+  vehicleTypes?: string[]
+  cargoType?: string
+  cargoQuantity?: number
+
+  // ── Cleanup-specific ──
+  cleanupType?: string
+  requiredTools?: string[]
+
+  // ── Legacy/extended data ──
+  disasterData?: Partial<DisasterDataSource>
+}
 
 // ─────────────────────────────────────────────
-// 地图区域
+// Map zones (unchanged)
 // ─────────────────────────────────────────────
 export type ZoneType = 'evacuation' | 'ngo' | 'restricted';
 
 export interface MapZone {
-  id: string;
-  type: ZoneType;
-  name: string;
-  coordinates: [number, number][]; // [lat, lng][]
-  description?: string;
-  color?: string;
+  id: string
+  type: ZoneType
+  name: string
+  coordinates: [number, number][]
+  description?: string
+  color?: string
 }

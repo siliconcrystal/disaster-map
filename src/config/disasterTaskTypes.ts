@@ -7,79 +7,71 @@ export interface TaskTypeOption {
   icon: string;
 }
 
-// 所有任務類型的完整列表
 export const ALL_TASK_TYPES: TaskTypeOption[] = [
-  { value: 'fire', label: '火災', icon: '🔥' },
-  { value: 'rescue', label: '搜救', icon: '🚨' },
-  { value: 'danger', label: '危險區域', icon: '🚧' },
-  { value: 'people', label: '人員統計', icon: '👥' },
-  { value: 'inspection', label: '建築檢查', icon: '⛑️' },
-  { value: 'medical', label: '醫療', icon: '🚑' },
-  { value: 'supply', label: '物資', icon: '📦' },
-  { value: 'cleanup', label: '清潔', icon: '🪏' },
-  { value: 'heavy', label: '重型機具', icon: '🚜' },
-  { value: 'utility', label: '水電', icon: '🔧' },
-  { value: 'support', label: '人力支援', icon: '💪' },
-  { value: 'transport', label: '協助運送', icon: '🛵' },
+  { value: 'search_rescue', label: '搜救', icon: '🚨' },
+  { value: 'medical_support', label: '醫療支援', icon: '🚑' },
+  { value: 'fire_response', label: '火災應變', icon: '🔥' },
+  { value: 'supply_delivery', label: '物資運送', icon: '📦' },
+  { value: 'personnel_transport', label: '人員運送', icon: '🛵' },
+  { value: 'equipment_transport', label: '設備運送', icon: '🚜' },
+  { value: 'cleanup', label: '清理', icon: '🪏' },
+  { value: 'repair', label: '修繕', icon: '🔧' },
+  { value: 'inspection', label: '巡檢', icon: '⛑️' },
+  { value: 'info_report', label: '資訊回報', icon: '📋' },
+  { value: 'info_update', label: '資訊更新', icon: '🔄' },
+  { value: 'info_verification', label: '資訊驗證', icon: '✅' },
+  { value: 'other', label: '其他', icon: '📍' },
 ];
 
-// 根據災害類型定義對應的任務類型
 export const DISASTER_TASK_TYPES: Record<DisasterType, TaskType[]> = {
   earthquake: [
-    'fire', // 地震火災
-    'rescue', // 搜救
-    'danger', // 危險區域
-    'people', // 人員統計 (All)
-    'inspection', // 建築檢查
-    'medical', // 醫療 (All)
-    'heavy', // 重型機具
+    'fire_response',
+    'search_rescue',
+    'inspection',
+    'equipment_transport',
+    'medical_support',
+    'cleanup',
+    'repair',
   ],
   fire: [
-    'fire', // 火災
-    'rescue', // 搜救
-    'danger', // 危險區域
-    'people', // 人員統計 (All)
-    'inspection', // 建築檢查
-    'medical', // 醫療 (All)
+    'fire_response',
+    'search_rescue',
+    'medical_support',
+    'inspection',
   ],
   storm: [
-    'danger', // 危險區域
-    'people', // 人員統計 (All)
-    'medical', // 醫療 (All)
-    'supply', // 物資
-    'cleanup', // 清潔
-    'heavy', // 重型機具
-    'utility', // 水電
-    'support', // 人力支援
+    'search_rescue',
+    'medical_support',
+    'supply_delivery',
+    'cleanup',
+    'equipment_transport',
+    'repair',
+    'other',
   ],
   flood: [
-    'danger', // 危險區域
-    'people', // 人員統計 (All)
-    'medical', // 醫療 (All)
-    'supply', // 物資
-    'cleanup', // 清潔
-    'heavy', // 重型機具
-    'utility', // 水電
-    'support', // 人力支援
+    'search_rescue',
+    'medical_support',
+    'supply_delivery',
+    'cleanup',
+    'equipment_transport',
+    'repair',
+    'other',
   ],
   pandemic: [
-    'people', // 人員統計 (All)
-    'medical', // 醫療 (All)
-    'supply', // 物資
-    'support', // 人力支援
-    'transport', // 協助運送
+    'medical_support',
+    'supply_delivery',
+    'personnel_transport',
+    'other',
   ],
   war: [
-    'fire', // 戰爭火災
-    'rescue', // 搜救
-    'danger', // 危險區域
-    'people', // 人員統計 (All)
-    'medical', // 醫療 (All)
-    'heavy', // 重型機具
+    'fire_response',
+    'search_rescue',
+    'medical_support',
+    'equipment_transport',
+    'other',
   ],
 };
 
-// 根據災害類型取得對應的任務類型選項（用於篩選器）
 export function getTaskTypesForDisaster(disasterType: DisasterType | null): TaskTypeOption[] {
   if (!disasterType) {
     return ALL_TASK_TYPES;
@@ -89,7 +81,6 @@ export function getTaskTypesForDisaster(disasterType: DisasterType | null): Task
   return ALL_TASK_TYPES.filter((type) => allowedTypes.includes(type.value));
 }
 
-// 根據災害類型取得篩選選項（包含「全部」選項）
 export function getTaskTypeFilterOptions(
   disasterType: DisasterType | null,
 ): { label: string; value: TaskType | 'all' }[] {

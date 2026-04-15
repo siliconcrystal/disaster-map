@@ -4,7 +4,7 @@ import { LocationPickerMap } from '@/components/map/LocationPickerMap';
 import { getTaskTypesForDisaster } from '@/config/disasterTaskTypes';
 import { generateMockTask, useTaskStore } from '@/store/useTaskStore';
 import { useUIStore } from '@/store/useUIStore';
-import { TaskType, Urgency } from '@/types/task';
+import { TaskType, Priority } from '@/types/task';
 import { Search, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -47,8 +47,8 @@ export function TaskCreateModal() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [type, setType] = useState<TaskType>('support');
-  const [urgency, setUrgency] = useState<Urgency>('medium');
+  const [type, setType] = useState<TaskType>('other');
+  const [priority, setPriority] = useState<Priority>('medium');
   const [address, setAddress] = useState(resolvedAddress ?? '');
   const [searchInput, setSearchInput] = useState('');
   const [localCoords, setLocalCoords] = useState<[number, number] | null>(newTaskCoords);
@@ -96,8 +96,8 @@ export function TaskCreateModal() {
       lng: localCoords[1],
       address: address || `${localCoords[0].toFixed(5)}, ${localCoords[1].toFixed(5)}`,
       type,
-      urgency,
-      status: 'reported',
+      priority,
+      status: 'pending',
       disasterCategory: currentDisasterType,
     });
 
@@ -212,13 +212,14 @@ export function TaskCreateModal() {
                 緊急程度
               </label>
               <select
-                value={urgency}
-                onChange={(e) => setUrgency(e.target.value as Urgency)}
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as Priority)}
                 className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
               >
                 <option value="low">一般</option>
                 <option value="medium">中等</option>
                 <option value="high">緊急</option>
+                <option value="critical">危急</option>
               </select>
             </div>
           </div>

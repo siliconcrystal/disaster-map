@@ -3,7 +3,7 @@
 import { getTaskTypeFilterOptions } from '@/config/disasterTaskTypes';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUIStore } from '@/store/useUIStore';
-import { Status, TaskType, TimeRange, Urgency } from '@/types/task';
+import { Status, TaskType, TimeRange, Priority } from '@/types/task';
 import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -17,8 +17,9 @@ const ASSIGNEE_OPTIONS = [
 
 // TYPE_OPTIONS 改為動態根據災害類型取得，見 FilterChips 組件內
 
-const URGENCY_OPTIONS: { label: string; value: Urgency | 'all' }[] = [
+const PRIORITY_OPTIONS: { label: string; value: Priority | 'all' }[] = [
   { label: '全部', value: 'all' },
+  { label: '危急', value: 'critical' },
   { label: '緊急', value: 'high' },
   { label: '中等', value: 'medium' },
   { label: '一般', value: 'low' },
@@ -26,10 +27,9 @@ const URGENCY_OPTIONS: { label: string; value: Urgency | 'all' }[] = [
 
 const STATUS_OPTIONS: { label: string; value: Status | 'all' }[] = [
   { label: '全部', value: 'all' },
-  { label: '已回報', value: 'reported' },
-  { label: '招募中', value: 'recruiting' },
+  { label: '待處理', value: 'pending' },
   { label: '進行中', value: 'in_progress' },
-  { label: '已完成', value: 'done' },
+  { label: '已完成', value: 'completed' },
 ];
 
 const TIME_RANGE_OPTIONS: { label: string; value: TimeRange }[] = [
@@ -251,9 +251,9 @@ export function FilterChips() {
 
         <FilterDropdown
           label="緊急程度"
-          value={filters.urgency}
-          options={URGENCY_OPTIONS}
-          onChange={(val) => setFilters({ urgency: val as Urgency | 'all' })}
+          value={filters.priority}
+          options={PRIORITY_OPTIONS}
+          onChange={(val) => setFilters({ priority: val as Priority | 'all' })}
         />
 
         <FilterDropdown

@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import type { DisasterDataSource, DisasterType } from '../types/disasterData';
-import { Task, TaskType, Urgency, Status, TimeRange, MapZone } from '../types/task';
+import { Task, TaskType, Priority, Status, TimeRange, MapZone } from '../types/task';
 import { seedTasks } from '../data/seedTasks';
 import { seedZones } from '../data/seedZones';
+import { getVisibleTaskTypes } from '../config/roleTaskMapping';
 
 // ─── mock helper (used by generateDisasterData & generateMockTask) ──────────
 function rnd(min: number, max: number) {
@@ -249,29 +250,30 @@ function mockDisasterData(
 // Used by TaskCreateModal to generate a new task with disaster-specific mock data
 export const generateMockTask = (defaultData?: Partial<Task>): Task => {
   const types: TaskType[] = [
-    'fire', 'rescue', 'danger', 'people', 'inspection', 'medical',
-    'supply', 'cleanup', 'heavy', 'utility', 'support', 'transport',
+    'search_rescue', 'medical_support', 'fire_response', 'supply_delivery',
+    'personnel_transport', 'equipment_transport', 'cleanup', 'repair',
+    'inspection', 'other',
   ];
-  const urgencies: Urgency[] = ['low', 'medium', 'high'];
-  const statuses: Status[] = ['reported', 'recruiting', 'in_progress', 'done'];
+  const priorities: Priority[] = ['low', 'medium', 'high', 'critical'];
+  const statuses: Status[] = ['pending', 'in_progress', 'completed'];
 
   const lat = 23.65 + Math.random() * 0.1;
   const lng = 121.35 + Math.random() * 0.1;
 
   const type = pick(types);
-  const urgency = pick(urgencies);
+  const priority = pick(priorities);
   const status = pick(statuses);
 
   const disasterCategory: DisasterType =
-    type === 'inspection' || type === 'rescue' || type === 'heavy' || type === 'danger'
+    type === 'inspection' || type === 'search_rescue' || type === 'equipment_transport'
       ? 'earthquake'
-      : type === 'fire'
+      : type === 'fire_response'
         ? 'fire'
-        : type === 'medical' || type === 'people'
+        : type === 'medical_support'
           ? 'pandemic'
           : type === 'cleanup'
             ? 'flood'
-            : type === 'support' || type === 'transport'
+            : type === 'personnel_transport'
               ? 'war'
               : 'earthquake';
 
@@ -282,12 +284,19 @@ export const generateMockTask = (defaultData?: Partial<Task>): Task => {
     lat,
     lng,
     type,
-    urgency,
+    disasterType: 'earthquake',
+    priority,
     status,
+    source: 'user',
+    visibility: 'public',
     address: '',
     reporterName: '',
     reporterUnit: '',
-    photos: [],
+    photoUrls: [],
+    confidenceScore: 0.5,
+    verificationStatus: 'unverified',
+    isDuplicate: false,
+    moderationStatus: 'pending_review',
     disasterCategory,
     history: [
       { timestamp: Date.now(), message: '案件提交', type: 'system' },
@@ -301,7 +310,7 @@ export const generateMockTask = (defaultData?: Partial<Task>): Task => {
 
 interface Filters {
   type: TaskType | 'all';
-  urgency: Urgency | 'all';
+  priority: Priority | 'all';
   status: Status | 'all';
   timeRange: TimeRange;
   assignee?: 'all' | 'my_role' | 'assigned';
@@ -362,7 +371,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   searchQuery: '',
   filters: {
     type: 'all',
-    urgency: 'all',
+    priority: 'all',
     status: 'all',
     timeRange: 'all',
     assignee: 'all',
@@ -435,7 +444,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
       // Category filters
       if (filters.type !== 'all' && t.type !== filters.type) return false;
-      if (filters.urgency !== 'all' && t.urgency !== filters.urgency) return false;
+      if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
       if (filters.status !== 'all' && t.status !== filters.status) return false;
 
       // Time filter
@@ -450,19 +459,21 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         }
       }
 
-      // Assignee filter
-      if (filters.assignee === 'my_role') {
-        // Show tasks matching user's role type — only filter if role has a mapped type
-        // Keys are Chinese role names from UserDropdown ROLES
-        const roleTypeMap: Record<string, string> = {
-          '消防隊': 'fire', '救難隊': 'rescue', '醫療團隊': 'medical',
-        };
-        if (role && roleTypeMap[role] && t.type !== roleTypeMap[role]) return false;
-      } else if (filters.assignee === 'assigned') {
+      // Role-based visibility — always applies when a role is set, per
+      // spreadsheet 欄位overview tab mapping. Switching role in the dropdown
+      // filters the map/board immediately; user does NOT need to click a chip.
+      // `null` from getVisibleTaskTypes means default/unknown role → no filter.
+      const visibleTypes = getVisibleTaskTypes(role);
+      if (visibleTypes && !visibleTypes.includes(t.type)) return false;
+
+      // Assignee filter (orthogonal to role filter)
+      if (filters.assignee === 'assigned') {
         // Show only tasks that user has joined
         const { myTaskIds } = get();
         if (!myTaskIds.has(t.id)) return false;
       }
+      // Note: 'my_role' chip is now a no-op (role filter already applied above).
+      // Left in the UI for backward compatibility; will be removed later.
 
       return true;
     });

@@ -20,17 +20,16 @@ import {
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
 
+// Frontend-facing roles only (per spreadsheet 欄位overview tab).
+// Backend-only roles (指揮所/軍方/縣政府行政部門, 線上志工) and non-spec items
+// (無人機隊伍) have been removed. 救難隊 and 消防隊 merged per spec.
 const ROLES = [
   { name: '未設定角色', icon: '👤' },
-  { name: '指揮所', icon: '🎖️' },
-  { name: '災民', icon: '🏡' },
-  { name: '救難隊', icon: '🆘' },
-  { name: '消防隊', icon: '🚒' },
+  { name: '救難隊（含消防隊）', icon: '🆘' },
   { name: '醫療團隊', icon: '🚑' },
-  { name: '無人機隊伍', icon: '🛸' },
   { name: '在地組織', icon: '🏘️' },
-  { name: '線上志工', icon: '💻' },
   { name: '現場志工', icon: '🤝' },
+  { name: '災民（含家屬）', icon: '🏡' },
 ];
 
 const DISASTER_TYPES: { type: DisasterType; name: string; icon: string }[] = [

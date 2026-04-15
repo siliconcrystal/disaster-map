@@ -1,13 +1,15 @@
 "use client";
 
 import { useStationStore } from "@/store/useStationStore";
-import { X, MapPin, Phone, User, Clock, Package, FileText } from "lucide-react";
+import { X, MapPin, Phone, Clock, FileText } from "lucide-react";
 import { useMemo } from "react";
 
 const TYPE_LABEL: Record<string, string> = {
-  shower: "🚿 洗澡站", restroom: "🚻 廁所", medical: "🏥 醫療站",
+  shower: "🚿 洗澡站", toilet: "🚻 廁所", medical: "🏥 醫療站",
   supply: "📦 物資站", shelter: "🏠 避難所", accommodation: "🏨 住宿",
-  water: "💧 飲水站", repair: "🔧 維修站"
+  water: "💧 飲水站", gas_station: "⛽ 加油站", transport: "🚌 交通點",
+  charge_spot: "🔌 充電站", power_station: "⚡ 發電站",
+  cellular_point: "📶 通訊站", reception_center: "🏘️ 收容所",
 };
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
@@ -80,25 +82,20 @@ export function StationDetailCard() {
           )}
 
           {/* Contact */}
-          {(station.contactName || station.contact) && (
+          {station.contactInfo && (
             <div className="flex items-start gap-3">
               <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0">
-                {station.contactName ? <User className="w-4 h-4 text-slate-400" /> : <Phone className="w-4 h-4 text-slate-400" />}
+                <Phone className="w-4 h-4 text-slate-400" />
               </div>
               <div>
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">聯絡資訊</h4>
-                {station.contactName && (
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-0.5">{station.contactName}</p>
-                )}
-                {station.contact && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{station.contact}</p>
-                )}
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-0.5">{station.contactInfo}</p>
               </div>
             </div>
           )}
 
           {/* Operating Hours */}
-          {(station.openTime || station.endTime) && (
+          {station.availableTime && (
             <div className="flex items-start gap-3">
               <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0">
                 <Clock className="w-4 h-4 text-slate-400" />
@@ -106,41 +103,21 @@ export function StationDetailCard() {
               <div>
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">開放時間</h4>
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-0.5">
-                  {station.openTime || '—'} ~ {station.endTime || '—'}
+                  {station.availableTime}
                 </p>
               </div>
             </div>
           )}
 
-          {/* Resources */}
-          {station.resources && station.resources.length > 0 && (
-            <div className="flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0">
-                <Package className="w-4 h-4 text-slate-400" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">可用資源</h4>
-                <div className="mt-1.5 space-y-1">
-                  {station.resources.map((r, i) => (
-                    <div key={i} className="flex items-center justify-between text-sm bg-slate-50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg">
-                      <span className="text-slate-700 dark:text-slate-200 font-medium">{r.name}</span>
-                      <span className="text-slate-500 dark:text-slate-400">{r.amount} {r.unit}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Notes */}
-          {station.notes && (
+          {/* Description */}
+          {station.description && (
             <div className="flex items-start gap-3">
               <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0">
                 <FileText className="w-4 h-4 text-slate-400" />
               </div>
               <div>
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">備註</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">{station.notes}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">{station.description}</p>
               </div>
             </div>
           )}
